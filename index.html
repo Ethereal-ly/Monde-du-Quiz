@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Monde du Quiz</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 24px 28px;
+      max-width: 750px;
+      width: 95%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #c2185b;
+      margin-top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      font-size: 32px;
+    }
+
+    .ribbon {
+      font-size: 32px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #c2185b;
+    }
+
+    .categories, .difficultes, .mode-choix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      background: #f8bbd0;
+      color: #4a148c;
+      font-weight: bold;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    }
+
+    .btn:hover {
+      background: #f48fb1;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    .question-area {
+      margin-top: 20px;
+      border-top: 1px solid #f8bbd0;
+      padding-top: 16px;
+      display: none;
+    }
+
+    .options {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .option-btn {
+      border-radius: 8px;
+      border: none;
+      padding: 10px;
+      background: #fce4ec;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .option-btn:hover {
+      background: #f8bbd0;
+      transform: translateY(-1px);
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .score-display {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #4a148c;
+      text-align: center;
+    }
+
+    .back {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .back button {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      background: #f8bbd0;
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a148c;
+    }
+
+    #page-fin {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    #page-fin .emoji {
+      font-size: 100px;
+      margin-bottom: 20px;
+    }
+
+    #page-fin .rang {
+      font-size: 40px;
+      font-weight: bold;
+      color: #c2185b;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div id="page-accueil">
+      <h1><span class="ribbon">🎀</span> Monde du Quiz 🎀 </h1>
+      <h2>Choisis une catégorie</h2>
+
+      <div class="categories">
+        <button class="btn" onclick="chooseMode('histoireqc')">Histoire du Québec</button>
+        <button class="btn" onclick="chooseMode('science')">Science</button>
+        <button class="btn" onclick="chooseMode('geographie')">Géographie</button>
+        <button class="btn" onclick="chooseMode('culture')">Culture générale</button>
+        <button class="btn" onclick="chooseMode('art')">Art</button>
+        <button class="btn" onclick="chooseMode('langues')">Langues & linguistiques</button>
+        <button class="btn" onclick="chooseMode('economie')">Économie</button>
+        <button class="btn" onclick="chooseMode('sports')">Sports</button>
+        <button class="btn" onclick="chooseMode('math')">Math</button>
+        <button class="btn" onclick="chooseMode('cultureQC')">Culture québécoise</button>
+        <button class="btn" onclick="chooseMode('pop')">Pop culture</button>
+        <button class="btn" onclick="chooseMode('vie')">Vie quotidienne</button>
+        <button class="btn" onclick="chooseMode('nature')">Nature</button>
+        <button class="btn" onclick="chooseMode('enjeux')">Enjeux mondiaux</button>
+        <button class="btn" onclick="chooseMode('histoire')">Histoire générale</button>
+        <button class="btn" onclick="chooseMode('énigmes')">Énigmes</button>
+
+
+
+      </div>
+    </div>
+
+    <div id="page-mode" style="display:none;">
+      <h1><span class="ribbon">🎀</span> Monde du Quiz 🎀 </h1>
+      <h2 id="titre-mode"></h2>
+      <h3>Choisis un mode</h3>
+
+      <div class="mode-choix">
+        <button class="btn" onclick="chooseDifficulty()">Mode Quiz</button>
+        <button class="btn" onclick="startRevision()">Mode Révision</button>
+      </div>
+
+      <div class="back">
+        <button onclick="goHome()">Retour</button>
+      </div>
+    </div>
+
+    <div id="page-difficulte" style="display:none;">
+      <h1><span class="ribbon">🎀</span> Jeu éducatif</h1>
+      <h2 id="titre-difficulte"></h2>
+      <h3>Choisis un niveau</h3>
+
+      <div class="difficultes">
+        <button class="btn" onclick="startCategory('facile')">Facile</button>
+        <button class="btn" onclick="startCategory('moyen')">Moyen</button>
+        <button class="btn" onclick="startCategory('difficile')">Difficile</button>
+      </div>
+
+      <div class="back">
+        <button onclick="goHome()">Retour</button>
+      </div>
+    </div>
+
+    <div id="page-question" class="question-area">
+      <h1><span class="ribbon">🎀</span> Jeu éducatif</h1>
+      <h2 id="cat-title"></h2>
+
+      <div class="score-display" id="score-display"></div>
+
+      <div id="question-text"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+
+      <div class="back">
+        <button onclick="goHome()">Retour aux catégories</button>
+      </div>
+    </div>
+
+    <div id="page-fin">
+      <h1><span class="ribbon">🎀</span> Jeu éducatif</h1>
+      <div class="emoji">👏</div>
+      <h2 id="score-final"></h2>
+      <div class="rang" id="rang-final"></div>
+
+      <div class="back">
+        <button onclick="goHome()">Retour au menu</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let selectedCategory = null;
+    let selectedDifficulty = null;
+    let currentIndex = 0;
+    let revisionMode = false;
+    let score = 0;
+
+    const questions = {
+      histoireqc: {
+        revision: [
+          {q:"En quelle année Jacques Cartier arrive-t-il pour la première fois en Amérique ?",o:["1492","1534","1608","1759"],b:1},
+          {q:"Quel explorateur fonde Québec en 1608 ?",o:["Frontenac","Cartier","La Salle","Champlain"],b:3},
+          {q:"Quel peuple autochtone habitait la vallée du Saint-Laurent avant l’arrivée des Européens ?",o:["Inuits","Métis","Algonquiens","Iroquoiens"],b:3},
+          {q:"Quel événement met fin à la Nouvelle-France ?",o:["Révolution américaine","Conquête britannique","Rébellion des Patriotes","Acte d’Union"],b:1},
+          {q:"Quel traité cède officiellement la Nouvelle-France à la Grande-Bretagne ?",o:["Traité de Paris (1763)","Traité de Versailles","Acte de Québec","Acte constitutionnel"],b:0},
+          {q:"Quel peuple autochtone vivait principalement de la chasse et du nomadisme ?",o:["Iroquoiens","Inuits","Algonquiens","Métis"],b:2},
+          {q:"Quel événement marque la fin du régime français ?",o:["Confédération canadienne","Acte d'Union","Bataille des Plaines d’Abraham","Rébellion de 1837"],b:2},
+          {q:"Quel document garantit la liberté de religion aux Canadiens français en 1774 ?",o:["Acte constitutionnel","Acte de Québec","Traité de Paris","Acte d’Union"],b:1},
+          {q:"En quelle année a lieu la Confédération canadienne ?",o:["1763","1812","1905","1867"],b:3},
+          {q:"Quel premier ministre québécois est associé à la Révolution tranquille ?",o:["Duplessis","Lesage","Bourassa","Parizeau"],b:1},
+          {q:"Quel groupe réclame des réformes démocratiques en 1837-1838 ?",o:["Explorateurs","Loyalistes","Métis","Patriotes"],b:3},
+          {q:"Quel événement mène à la création du Canada en 1867 ?",o:["Acte de Québec","Acte de l’Amérique du Nord britannique","Conférence de Charlottetown","Rébellion des Métis"],b:1},
+          {q:"Quel peuple autochtone vit principalement dans le Nord canadien ?",o:["Inuits","Algonquiens","Iroquoiens","Métis"],b:0},
+          {q:"Quel explorateur cherche un passage vers l’Asie mais trouve le Canada ?",o:["Colomb","Cartier","Cook","Hudson"],b:1},
+          {q:"Quel événement marque la fin du régime britannique colonial strict ?",o:["Acte constitutionnel","Acte d’Union","Confédération","Gouvernement responsable"],b:3},
+          {q:"Quel conflit oppose la France et la Grande-Bretagne en Amérique ?",o:["Rébellions des Patriotes","Guerre de 1812","Guerre de Sept Ans","Révolution américaine"],b:2},
+          {q:"Quel peuple autochtone pratiquait l’agriculture du maïs ?",o:["Algonquiens","Inuits","Iroquoiens","Métis"],b:2},
+          {q:"Quel événement marque l’entrée du Québec dans la modernité ?",o:["Référendum de 1980","Confédération","Crise d’Oka","Révolution tranquille"],b:3},
+          {q:"Quel premier ministre canadien adopte le rapatriement de la Constitution en 1982 ?",o:["Trudeau","Mulroney","Chrétien","Harper"],b:0},
+          {q:"Quel événement oppose les Mohawks et le gouvernement en 1990 ?",o:["Crise d’Oka","Rébellion des Patriotes","Référendum","Confédération"],b:0}
+        ],
+        facile: [
+  {q:"Qui a fondé la ville de Québec ?",o:["Jacques Cartier","Jean Talon","Samuel de Champlain","Louis Hébert"],b:2},
+  {q:"En quelle année a eu lieu la bataille des Plaines d’Abraham ?",o:["1608","1759","1812","1867"],b:1},
+  {q:"Quel peuple autochtone vivait dans des maisons longues ?",o:["Inuits","Iroquoiens","Algonquiens","Métis"],b:1},
+  {q:"Quel explorateur cherchait un passage vers l’Asie ?",o:["Colomb","Cartier","Cook","Magellan"],b:1},
+  {q:"Quel document de 1774 protège la religion catholique ?",o:["Acte constitutionnel","Traité de Paris","Acte de Québec","Acte d’Union"],b:2},
+  {q:"Quel événement marque la fin de la Nouvelle-France ?",o:["Conquête britannique","Rébellion des Patriotes","Confédération","Révolution tranquille"],b:0},
+  {q:"Quel peuple autochtone vivait surtout de l’agriculture ?",o:["Algonquiens","Inuits","Iroquoiens","Métis"],b:2},
+  {q:"En quelle année a lieu la Confédération ?",o:["1763","1812","1867","1905"],b:2},
+  {q:"Quel premier ministre est associé à la Révolution tranquille ?",o:["Duplessis","Lesage","Bourassa","Parizeau"],b:1},
+  {q:"Quel groupe se révolte en 1837-1838 ?",o:["Explorateurs","Loyalistes","Métis","Patriotes"],b:3},
+  {q:"Quel traité met fin à la guerre de Sept Ans ?",o:["Traité de Paris","Acte de Québec","Acte d’Union","Acte constitutionnel"],b:0},
+  {q:"Quel peuple autochtone vit dans le Nord ?",o:["Iroquoiens","Algonquiens","Inuits","Métis"],b:2},
+  {q:"Qui a découvert le Canada pour la France ?",o:["Colomb","Cartier","Cook","Hudson"],b:1},
+  {q:"Quel événement marque la modernisation du Québec ?",o:["Révolution tranquille","Confédération","Crise d’Oka","Référendum"],b:0},
+  {q:"Quel premier ministre rapatrie la Constitution en 1982 ?",o:["Chrétien","Mulroney","Trudeau","Harper"],b:2},
+  {q:"Quel événement oppose les Mohawks en 1990 ?",o:["Crise d’Oka","Rébellion","Référendum","Confédération"],b:0},
+  {q:"Quel peuple vivait dans des tipis ?",o:["Iroquoiens","Algonquiens","Inuits","Métis"],b:1},
+  {q:"Quel explorateur fonde Port-Royal ?",o:["Champlain","Cartier","Poutrincourt","La Salle"],b:2},
+  {q:"Quel événement a lieu en 1763 ?",o:["Acte de Québec","Traité de Paris","Confédération","Rébellion"],b:1},
+  {q:"Quel peuple pratiquait la pêche au phoque ?",o:["Iroquoiens","Algonquiens","Inuits","Métis"],b:2}
+],
+        moyen: [
+  {q:"Quel gouverneur général a construit la Citadelle de Québec ?",o:["Frontenac","Murray","Carleton","Dalhousie"],b:3},
+  {q:"Quel système économique enrichissait la métropole ?",o:["Capitalisme","Mercantilisme","Féodalisme","Communisme"],b:1},
+  {q:"Quel événement déclenche la guerre de Sept Ans ?",o:["Attaque de Louisbourg","Conflit en Ohio","Rébellion des Patriotes","Révolution américaine"],b:1},
+  {q:"Quel acte crée deux provinces en 1791 ?",o:["Acte de Québec","Acte constitutionnel","Acte d’Union","AANB"],b:1},
+  {q:"Quel chef patriote est pendu en 1838 ?",o:["Papineau","Nelson","Chevalier de Lorimier","Brown"],b:2},
+  {q:"Quel événement mène au gouvernement responsable ?",o:["Rébellion","Acte d’Union","Élection de Jean Lesage","Rapport Durham"],b:3},
+  {q:"Quel premier ministre lance la nationalisation de l’électricité ?",o:["Lesage","Duplessis","Bourassa","Parizeau"],b:0},
+  {q:"Quel événement a lieu en 1980 ?",o:["Référendum","Crise d’Oka","Confédération","Meech"],b:0},
+  {q:"Quel événement a lieu en 1995 ?",o:["Meech","Confédération","Crise d’Oka","Référendum"],b:3},
+  {q:"Quel peuple autochtone formait la Ligue des Cinq Nations ?",o:["Algonquiens","Inuits","Iroquois","Métis"],b:2},
+  {q:"Quel explorateur atteint les Grands Lacs ?",o:["Cartier","Champlain","Bernand Voyer","Hudson"],b:1},
+  {q:"Quel événement marque 1755 ?",o:["Conquête","Déportation des Acadiens","Rébellion","Confédération"],b:1},
+  {q:"Quel gouverneur défend Québec en 1690 ?",o:["Montcalm","Murray","Carleton","Frontenac"],b:3},
+  {q:"Quel événement marque 1840 ?",o:["Acte d’Union","Acte constitutionnel","Rapport Durham","Acte constitutionnel"],b:0},
+  {q:"Quel premier ministre crée Hydro-Québec ?",o:["Lesage","Duplessis","Godin","Bourassa"],b:1},
+  {q:"Quel événement marque 1960 ?",o:["Révolution de l'éducation","Révolution tranquille","Plaines d'Abraham","Confédération"],b:1},
+  {q:"Quel événement marque 1970 ?",o:["Crise d’Octobre","Référendum","Meech","Confédération"],b:0},
+  {q:"Quel événement marque 1982 ?",o:["Crise économique","Révolution tranquille","Référendum","Rapatriement"],b:3},
+  {q:"Quel événement marque 2008 ?",o:["Crise agricole","Confédération","Référendum","400e de Québec"],b:3},
+  {q:"Quel explorateur découvre le Mississippi ?",o:["Champlain","La Salle","Cartier","Hudson"],b:1}
+],
+        difficile: [
+  {q:"Quel gouverneur impose le régime militaire après 1760 ?",o:["Murray","Carleton","Haldimand","Amherst"],b:3},
+  {q:"Quel traité reconnaît les droits territoriaux autochtones en 1763 ?",o:["Acte de Québec","Proclamation royale","Traité de Paris","Acte constitutionnel"],b:1},
+  {q:"Quel événement déclenche la Rébellion de 1837 ?",o:["92 résolutions","Acte d’Union","Rapport Durham","Confédération"],b:0},
+  {q:"Quel chef patriote dirige la bataille de Saint-Denis ?",o:["Papineau","Nelson","Brown","Lorimier"],b:1},
+  {q:"Quel événement mène à l’Acte d’Union ?",o:["Référendum","Confédération Wabanaki","Crise d’Oka","Rébellions des Patriotes"],b:3},
+  {q:"Quel premier ministre adopte la loi 101 ?",o:["Lesage","Bourassa","Duplessis","Lévesque"],b:3},
+  {q:"Quel événement marque 1987 ?",o:["Accord du lac Meech","Référendum","Crise d’Oka","Confédération"],b:0},
+  {q:"Quel événement marque 1992 ?",o:["Meech","Charlottetown","Référendum","Confédération"],b:1},
+  {q:"Quel explorateur cartographie la baie d’Hudson ?",o:["Cartier","La Salle","Champlain","Hudson"],b:3},
+  {q:"Quel événement marque 1701 ?",o:["Confédération canadienne","Conquête britannique","Rébellion","Grande Paix de Montréal"],b:3},
+  {q:"Quel gouverneur affronte les Fenians ?",o:["Dufferin","Carleton","Murray","Dorion"],b:0},
+  {q:"Quel événement marque 1917 ?",o:["Crise de la conscription","Référendum","Confédération","Crise d’Oka"],b:0},
+  {q:"Quel événement marque 1929 ?",o:["Rébellions des Patriotes","Grande Dépression","Confédération","Crise"],b:1},
+  {q:"Quel événement marque 1944 ?",o:["Nationalisation de l’électricité","Création d’Hydro-Québec","Crise d’Oka","Référendum"],b:1},
+  {q:"Quel événement marque 1977 ?",o:["Confédération","Référendum","Meech","Loi 101"],b:3},
+  {q:"Quel événement marque 1980 ?",o:["Confédération","Crise d’Oka","Meech","Référendum"],b:3},
+  {q:"Quel événement marque 1990 ?",o:["Référendum","Crise d’Oka","Meech","Confédération"],b:1},
+  {q:"Quel événement marque 1995 ?",o:["Référendum","Meech","Confédération","Crise"],b:0},
+  {q:"Quel événement marque 2006 ?",o:["Crise","Référendum","Confédération","Reconnaissance de la nation québécoise"],b:3},
+  {q:"Quel événement marque 2017 ?",o:["Confédération","400e de Québec","375e de Montréal","Référendum"],b:2}
+],
+      },
+
+      science: {
+        revision: [
+          {q:"Quel est l’état de l’eau entre 0 °C et 100 °C ?",o:["Solide","Liquide","Gaz","Plasma"],b:1},
+          {q:"Quel organe pompe le sang dans le corps humain ?",o:["Cœur","Poumons","Foie","Reins"],b:0},
+          {q:"Quel est le symbole chimique du sodium ?",o:["Na","So","Sn","Sd"],b:0},
+          {q:"Quel type de reproduction implique un seul parent ?",o:["Sexuée","Génétique","Cellulaire","Asexuée"],b:3},
+          {q:"Quel est le rôle principal des mitochondries ?",o:["Stocker l’eau","Produire de l’énergie","Créer des protéines","Décomposer les déchets"],b:1},
+          {q:"Quel gaz est essentiel à la photosynthèse ?",o:["Oxygène","Azote","CO2","Hélium"],b:2},
+          {q:"Quel est le plus grand organe du corps humain ?",o:["Cœur","Peau","Foie","Poumons"],b:1},
+          {q:"Quel est le nom de la force qui attire les objets vers la Terre ?",o:["Gravité","Magnétisme","Friction","Pression"],b:0},
+          {q:"Quel est le nom de la molécule qui transporte l’oxygène dans le sang ?",o:["Insuline","ADN","Glucose","Hémoglobine"],b:3},
+          {q:"Quel est le nom de la planète la plus proche du Soleil ?",o:["Terre","Mars","Mercure","Vénus"],b:2},
+          {q:"Quel est le nom de la couche d’ozone ?",o:["Troposphère","Stratosphère","Mésosphère","Thermosphère"],b:1},
+          {q:"Quel est le nom de la particule chargée négativement ?",o:["Proton","Neutron","Électron","Ion"],b:2},
+          {q:"Quel est le nom du processus par lequel les plantes fabriquent leur nourriture ?",o:["Respiration","Photosynthèse","Digestion","Transpiration"],b:1},
+          {q:"Quel est le nom de la théorie qui explique l’origine de l’univers ?",o:["Relativité","Big Bang","Évolution","Quantique"],b:1},
+          {q:"Quel est le nom de la cellule reproductrice masculine ?",o:["Ovule","Globule blanc","Globule rouge","Spermatozoïde"],b:3},
+          {q:"Quel est le nom de la cellule reproductrice féminine ?",o:["Ovule","Spermatozoïde","Embryon","Placenta"],b:0},
+          {q:"Quel est le nom de la force qui s’oppose au mouvement ?",o:["Gravité","Friction","Pression","Magnétisme"],b:1},
+          {q:"Quel est le nom de la molécule d’ADN en forme de double hélice ?",o:["ADN","ARN","ATP","NADH"],b:0},
+          {q:"Quel est le nom de la science qui étudie les fossiles ?",o:["Biologie","Paléontologie","Géologie","Astronomie"],b:1},
+          {q:"Quel est le nom de la planète surnommée la planète rouge ?",o:["Mars","Jupiter","Saturne","Vénus"],b:0}
+        ],
+        facile: [
+  {q:"Quel est l’état de l’eau à 25 °C ?",o:["Solide","Gaz","Liquide","Plasma"],b:2},
+  {q:"Quel organe pompe le sang ?",o:["Poumons","Cœur","Foie","Reins"],b:1},
+  {q:"Quel gaz respirons-nous ?",o:["CO2","Hélium","Azote","Oxygène"],b:3},
+  {q:"Quel est le symbole du fer ?",o:["Fe","Ir","Fr","Fi"],b:0},
+  {q:"Quel organe sert à penser ?",o:["Cœur","Poumons","Cerveau","Foie"],b:2},
+  {q:"Quel est l’état de l’eau à -10 °C ?",o:["Solide","Liquide","Gaz","Plasma"],b:0},
+  {q:"Quel est l’état de l’eau à 120 °C ?",o:["Solide","Liquide","Gaz","Plasma"],b:2},
+  {q:"Quel est le nom de notre galaxie ?",o:["Andromède","Voie lactée","Sombrero","Orion"],b:1},
+  {q:"Quel est le nom de la planète bleue ?",o:["Mars","Terre","Neptune","Uranus"],b:1},
+  {q:"Quel est le nom de la planète rouge ?",o:["Mercure","Jupiter","Vénus","Mars"],b:3},
+  {q:"Quel est le nom du satellite naturel de la Terre ?",o:["Lune","Soleil","Mars","Étoile"],b:0},
+  {q:"Quel est le nom de la force qui nous attire au sol ?",o:["Magnétisme","Gravité","Friction","Pression"],b:1},
+  {q:"Quel est le nom de la molécule d’ADN ?",o:["ARN","ATP","ADN","NADH"],b:1},
+  {q:"Quel est le nom de la cellule reproductrice masculine ?",o:["Ovule","Spermatozoïde","Globule rouge","Globule blanc"],b:1},
+  {q:"Quel est le nom de la cellule reproductrice féminine ?",o:["Ovule","Spermatozoïde","Embryon","Placenta"],b:0},
+  {q:"Quel est le nom du gaz expulsé par les plantes ?",o:["CO2","Oxygène","Azote","Hélium"],b:1},
+  {q:"Quel est le nom du gaz absorbé par les plantes ?",o:["Oxygène","Hélium","Azote","CO2"],b:3},
+  {q:"Quel est le nom de la science qui étudie les animaux ?",o:["Botanique","Zoologie","Géologie","Astronomie"],b:1},
+  {q:"Quel est le nom de la science qui étudie les plantes ?",o:["Botanique","Zoologie","Géologie","Astronomie"],b:0},
+  {q:"Quel est le nom de la science qui étudie la Terre ?",o:["Botanique","Zoologie","Géologie","Astronomie"],b:2}
+],
+        moyen: [
+  {q:"Quel est le rôle des mitochondries ?",o:["Stocker l’eau","Produire de l’énergie","Créer des protéines","Décomposer les déchets"],b:1},
+  {q:"Quel est le rôle des ribosomes ?",o:["Décomposer les déchets","Produire de l’énergie","Stocker l’ADN","Produire des protéines"],b:3},
+  {q:"Quel est le rôle du noyau ?",o:["Produire de l’énergie","Contrôler la cellule","Créer des protéines","Décomposer les déchets"],b:1},
+  {q:"Quel est le rôle des chloroplastes ?",o:["Respiration","Digestion","Photosynthèse","Transpiration"],b:2},
+  {q:"Quel est le nom de la théorie de l’origine de l’univers ?",o:["Relativité","Big Bang","Évolution","Quantique"],b:1},
+  {q:"Quel est le nom de la force qui s’oppose au mouvement ?",o:["Gravité","Magnétisme","Pression","Friction"],b:3},
+  {q:"Quel est le nom de la particule chargée positivement ?",o:["Proton","Neutron","Électron","Ion"],b:0},
+  {q:"Quel est le nom de la particule neutre ?",o:["Proton","Neutron","Électron","Ion"],b:1},
+  {q:"Quel est le nom de la particule chargée négativement ?",o:["Proton","Neutron","Électron","Ion"],b:2},
+  {q:"Quel est le nom de la couche d’ozone ?",o:["Troposphère","Stratosphère","Mésosphère","Thermosphère"],b:1},
+  {q:"Quel est le nom de la planète la plus massive ?",o:["Jupiter","Saturne","Neptune","Uranus"],b:0},
+  {q:"Quel est le nom de la planète la plus chaude ?",o:["Mercure","Vénus","Mars","Jupiter"],b:1},
+  {q:"Quel est le nom de la planète la plus froide ?",o:["Uranus","Neptune","Saturne","Mars"],b:1},
+  {q:"Quel est le nom de la planète la plus petite ?",o:["Vénus","Mars","Pluton","Mercure"],b:3},
+  {q:"Quel est le nom de la planète la plus grande ?",o:["Uranus","Saturne","Jupiter","Neptune"],b:2},
+  {q:"Quel est le nom du processus de reproduction cellulaire ?",o:["Méiose","Mitose","Fusion","Division"],b:1},
+  {q:"Quel est le nom du processus de reproduction sexuelle ?",o:["Division","Mitose","Fusion","Méiose"],b:3},
+  {q:"Quel est le nom de la science qui étudie les fossiles ?",o:["Biologie","Paléontologie","Géologie","Astronomie"],b:1},
+  {q:"Quel est le nom de la science qui étudie les étoiles ?",o:["Biologie","Paléontologie","Géologie","Astronomie"],b:3},
+  {q:"Quel est le nom de la science qui étudie les roches ?",o:["Biologie","Paléontologie","Géologie","Astronomie"],b:2}
+],
+        difficile: [
+  {q:"Quelle loi décrit la gravitation universelle ?",o:["Loi de Newton","Loi d’Ohm","Loi de Boyle","Loi de Faraday"],b:0},
+  {q:"Quel scientifique a proposé la théorie de la relativité restreinte ?",o:["Newton","Einstein","Galilée","Bohr"],b:1},
+  {q:"Quel scientifique est associé à la théorie de l’évolution par sélection naturelle ?",o:["Darwin","Mendel","Pasteur","Curie"],b:0},
+  {q:"Quel est le nom de la particule élémentaire associée au champ de Higgs ?",o:["Boson de Higgs","Quark top","Neutrino","Photon"],b:0},
+  {q:"Quel organe filtre le sang et produit l’urine ?",o:["Foie","Reins","Pancréas","Rate"],b:1},
+  {q:"Quel est le nom du pigment qui permet la photosynthèse ?",o:["Hémoglobine","Carotène","Mélanine","Chlorophylle"],b:3},
+  {q:"Quel type de liaison unit les atomes dans une molécule d’eau ?",o:["Liaison ionique","Liaison covalente","Liaison métallique","Liaison hydrogène"],b:1},
+  {q:"Quel est le pH d’une solution neutre ?",o:["0","3","7","14"],b:2},
+  {q:"Quel organe produit l’insuline ?",o:["Foie","Pancréas","Estomac","Reins"],b:1},
+  {q:"Comment appelle-t-on l’unité de base de l’hérédité ?",o:["Gène","Chromosome","Allèle","Nucléotide"],b:0},
+  {q:"Quel est le nom du gaz majoritaire dans l’atmosphère terrestre ?",o:["Oxygène","CO2","Azote","Argon"],b:2},
+  {q:"Quel est le nom du phénomène responsable de la montée de l’eau dans les plantes ?",o:["Osmose","Capillarité","Diffusion","Évaporation"],b:1},
+  {q:"Quel est le nom du processus par lequel une cellule se divise en deux cellules identiques ?",o:["Méiose","Mitose","Fécondation","Fusion"],b:1},
+  {q:"Quel est le nom du processus par lequel une cellule sexuelle est produite ?",o:["Méiose","Mitose","Fission","Bourgeonnement"],b:0},
+  {q:"Quel est le nom de la couche de l’atmosphère où se trouvent la plupart des phénomènes météorologiques ?",o:["Stratosphère","Troposphère","Mésosphère","Thermosphère"],b:1},
+  {q:"Quel est le nom de la force qui maintient les planètes en orbite autour du Soleil ?",o:["Force magnétique","Force nucléaire","Force gravitationnelle","Force électrique"],b:2},
+  {q:"Quel est le nom de la molécule qui stocke l’information génétique ?",o:["ARN","ADN","ATP","NADH"],b:1},
+  {q:"Quel est le nom de la science qui étudie les interactions entre les êtres vivants et leur milieu ?",o:["Biologie","Physique","Géologie","Écologie"],b:3},
+  {q:"Quel est le nom de la réaction qui libère de l’énergie dans les centrales nucléaires ?",o:["Combustion","Décomposition","Fusion nucléaire","Oxydation"],b:2},
+  {q:"Quel est le nom du phénomène par lequel la lumière change de direction en passant d’un milieu à un autre ?",o:["Réflexion","Réfraction","Diffraction","Interférence"],b:1}
+],
+      },
+
+      geographie: {
+        revision: [
+          {q:"Quelle est la capitale du Québec ?",o:["Montréal","Québec","Ottawa","Sherbrooke"],b:1},
+          {q:"Quel est le plus grand pays du monde ?",o:["Canada","États-Unis","Chine","Russie"],b:3},
+          {q:"Quel océan borde la côte est du Canada ?",o:["Pacifique","Atlantique","Arctique","Indien"],b:1},
+          {q:"Quel est le plus long fleuve du Québec ?",o:["Richelieu","Outaouais","Saint-Laurent","Saguenay"],b:2},
+          {q:"Quel pays possède la plus grande population ?",o:["Inde","États-Unis","Chine","Indonésie"],b:0},
+          {q:"Quel continent est le plus peuplé ?",o:["Afrique","Asie","Europe","Amérique"],b:1},
+          {q:"Quel pays est une île ?",o:["Suisse","Japon","Autriche","Hongrie"],b:1},
+          {q:"Quel pays a pour capitale Paris ?",o:["France","Belgique","Suisse","Italie"],b:0},
+          {q:"Quel pays a pour capitale Tokyo ?",o:["Chine","Corée","Japon","Thaïlande"],b:2},
+          {q:"Quel pays est célèbre pour le désert du Sahara ?",o:["Canada","Inde","Brésil","Algérie"],b:3},
+          {q:"Quel pays possède la forêt amazonienne ?",o:["Pérou","Colombie","Brésil","Mexique"],b:2},
+          {q:"Quel pays est connu pour les pyramides ?",o:["Mexique","Égypte","Pérou","Grèce"],b:1},
+          {q:"Quel pays a pour capitale Canberra ?",o:["Australie","Nouvelle-Zélande","Fidji","Indonésie"],b:0},
+          {q:"Quel pays a pour capitale Moscou ?",o:["Ukraine","Biélorussie","Pologne","Russie"],b:3},
+          {q:"Quel pays a pour capitale Berlin ?",o:["Autriche","Suisse","Allemagne","Pays-Bas"],b:2},
+          {q:"Quel pays a pour capitale Rome ?",o:["Italie","Espagne","Grèce","Portugal"],b:0},
+          {q:"Quel pays a pour capitale Londres ?",o:["Irlande","Royaume-Uni","Belgique","Pays-Bas"],b:1},
+          {q:"Quel pays a pour capitale Ottawa ?",o:["États-Unis","France","Mexique","Canada"],b:3},
+          {q:"Quel pays a pour capitale Pékin ?",o:["Chine","Japon","Corée","Vietnam"],b:0},
+          {q:"Quel pays a pour capitale Séoul ?",o:["Chine","Corée du Sud","Japon","Corée du Nord"],b:1}
+        ],
+        facile: [
+  {q:"Quelle est la capitale du Canada ?",o:["Toronto","Montréal","Ottawa","Vancouver"],b:2},
+  {q:"Quelle est la capitale des États-Unis ?",o:["New York","Washington D.C.","Los Angeles","Chicago"],b:1},
+  {q:"Quelle est la capitale de la France ?",o:["Lyon","Marseille","Paris","Nice"],b:2},
+  {q:"Quelle est la capitale du Québec ?",o:["Montréal","Québec","Laval","Gatineau"],b:1},
+  {q:"Quel est le plus grand océan du monde ?",o:["Arctique","Pacifique","Indien","Atlantique"],b:3},
+  {q:"Quel est le plus petit continent ?",o:["Australie","Europe","Afrique","Amérique du Sud"],b:0},
+  {q:"Quel continent est aussi un pays ?",o:["Afrique","Australie","Europe","Asie"],b:1},
+  {q:"Sur quel continent se trouve le Canada ?",o:["Europe","Asie","Amérique du Nord","Afrique"],b:2},
+  {q:"Sur quel continent se trouve la France ?",o:["Europe","Asie","Afrique","Amérique"],b:0},
+  {q:"Sur quel continent se trouve le Brésil ?",o:["Amérique du Nord","Amérique du Sud","Afrique","Europe"],b:1},
+  {q:"Sur quel continent se trouve l’Égypte ?",o:["Amérique","Asie","Europe","Afrique"],b:3},
+  {q:"Sur quel continent se trouve la Chine ?",o:["Afrique","Asie","Europe","Amérique"],b:1},
+  {q:"Sur quel continent se trouve l’Australie ?",o:["Afrique","Asie","Océanie","Europe"],b:2},
+  {q:"Quel est le plus grand pays du monde ?",o:["Canada","États-Unis","Russie","Chine"],b:2},
+  {q:"Quel est le plus grand pays d’Amérique du Sud ?",o:["Argentine","Brésil","Pérou","Colombie"],b:1},
+  {q:"Quel est le plus grand pays d’Afrique ?",o:["Afrique du Sud","Nigeria","Égypte","Algérie"],b:3},
+  {q:"Quel est le plus grand pays d’Europe ?",o:["France","Allemagne","Russie","Espagne"],b:2},
+  {q:"Quel est le plus grand pays d’Asie ?",o:["Chine","Inde","Russie","Mongolie"],b:2},
+  {q:"Quel est le plus grand désert du monde ?",o:["Sahara","Gobi","Kalahari","Arctique"],b:0},
+  {q:"Quel est le plus long fleuve du monde ?",o:["Yangtsé","Amazone","Mississippi","Nil"],b:3}
+],
+        moyen: [
+  {q:"Quel fleuve traverse l’Égypte ?",o:["Nil","Amazone","Mississippi","Danube"],b:0},
+  {q:"Quel fleuve traverse le Brésil ?",o:["Nil","Amazone","Yangtsé","Danube"],b:1},
+  {q:"Quel fleuve traverse la Chine ?",o:["Nil","Amazone","Yangtsé","Mississippi"],b:2},
+  {q:"Quel fleuve traverse les États-Unis ?",o:["Nil","Amazone","Mississippi","Danube"],b:2},
+  {q:"Quel fleuve traverse plusieurs pays d’Europe centrale ?",o:["Nil","Amazone","Yangtsé","Danube"],b:3},
+  {q:"Quel pays a la plus grande population ?",o:["Inde","Chine","États-Unis","Indonésie"],b:1},
+  {q:"Quel pays a la plus grande population en Afrique ?",o:["Égypte","Nigeria","Afrique du Sud","Kenya"],b:1},
+  {q:"Quel pays a la plus grande population en Europe ?",o:["France","Allemagne","Russie","Italie"],b:2},
+  {q:"Quel pays a la plus grande population en Amérique du Sud ?",o:["Brésil","Argentine","Colombie","Pérou"],b:1},
+  {q:"Quel pays a la plus grande population en Amérique du Nord ?",o:["Canada","États-Unis","Mexique","Cuba"],b:1},
+  {q:"Quel pays est entièrement entouré par l’Afrique du Sud ?",o:["Lesotho","Swaziland (Eswatini)","Botswana","Namibie"],b:0},
+  {q:"Quel pays est entièrement entouré par l’Italie ?",o:["Monaco","Saint-Marin","Andorre","Liechtenstein"],b:1},
+  {q:"Quel pays est entièrement entouré par l’Inde ?",o:["Bhoutan","Népal","Bangladesh","Lesotho"],b:2},
+  {q:"Quel pays est une île au large de l’Inde ?",o:["Sri Lanka","Bangladesh","Bhoutan","Népal"],b:0},
+  {q:"Quel pays est une île au large de la Chine ?",o:["Japon","TaÏwan","Philippines","Corée"],b:1},
+  {q:"Quel pays est une île au large de l’Afrique ?",o:["Madagascar","Sri Lanka","Islande","Cuba"],b:0},
+  {q:"Quel pays est une île au nord de l’Europe ?",o:["Sri Lanka","Madagascar","Cuba","Islande"],b:3},
+  {q:"Quel pays est une île dans les Caraïbes ?",o:["Madagascar","Islande","Cuba","Sri Lanka"],b:2},
+  {q:"Quel pays est une île au large de l’Italie ?",o:["Crète","Corse","Sardaigne","Sicile"],b:3},
+  {q:"Quel pays est une île au large de la France ?",o:["Sardaigne","Sicile","Corse","Crète"],b:2}
+],
+        difficile: [
+  {q:"Quel est le pays le plus peuplé d’Afrique ?",o:["Nigeria","Égypte","Afrique du Sud","Éthiopie"],b:0},
+  {q:"Quel est le pays le plus peuplé d’Europe (hors Russie) ?",o:["France","Allemagne","Italie","Espagne"],b:1},
+  {q:"Quel est le pays le plus peuplé d’Amérique du Sud ?",o:["Argentine","Brésil","Colombie","Pérou"],b:1},
+  {q:"Quel est le pays le plus peuplé d’Asie du Sud-Est ?",o:["Thaïlande","Vietnam","Indonésie","Malaisie"],b:2},
+  {q:"Quel est le pays le plus vaste d’Afrique ?",o:["Algérie","Nigeria","Égypte","Soudan"],b:0},
+  {q:"Quel est le pays le plus vaste d’Amérique du Sud ?",o:["Colombie","Brésil","Pérou","Argentine"],b:3},
+  {q:"Quel est le pays le plus vaste d’Asie ?",o:["Chine","Inde","Russie","Kazakhstan"],b:2},
+  {q:"Quel est le pays le plus vaste d’Europe (hors Russie) ?",o:["France","Ukraine","Espagne","Allemagne"],b:1},
+  {q:"Quel est le pays le plus vaste d’Amérique du Nord ?",o:["Canada","États-Unis","Mexique","Groenland"],b:0},
+  {q:"Quel est le pays le plus vaste d’Océanie ?",o:["Fidji","Nouvelle-Zélande","Papouasie-Nouvelle-Guinée","Australie"],b:3},
+  {q:"Quel désert se trouve en Afrique du Nord ?",o:["Sahara","Gobi","Kalahari","Atacama"],b:0},
+  {q:"Quel désert se trouve en Chine et en Mongolie ?",o:["Sahara","Gobi","Kalahari","Atacama"],b:1},
+  {q:"Quel désert se trouve en Afrique australe ?",o:["Sahara","Gobi","Kalahari","Atacama"],b:2},
+  {q:"Quel désert se trouve en Amérique du Sud ?",o:["Sahara","Gobi","Kalahari","Atacama"],b:3},
+  {q:"Quel est le plus haut sommet du monde ?",o:["K2","Everest","Kilimandjaro","Mont Blanc"],b:1},
+  {q:"Quel est le plus haut sommet d’Afrique ?",o:["Kilimandjaro","Everest","Mont Kenya","Atlas"],b:0},
+  {q:"Quel est le plus haut sommet d’Europe ?",o:["Mont Blanc","Elbrouz","Matterhorn","Etna"],b:1},
+  {q:"Quel est le plus haut sommet d’Amérique du Sud ?",o:["Aconcagua","Chimborazo","Huascarán","Fitz Roy"],b:0},
+  {q:"Quel est le plus haut sommet d’Amérique du Nord ?",o:["Mont Rainier","Mont Logan","Mont Whitney","Denali"],b:3},
+  {q:"Quel est le plus haut sommet d’Océanie ?",o:["Puncak Jaya","Mont Cook","Kosciuszko","Mauna Kea"],b:0}
+],
+      },
+
+      culture: {
+        revision: [
+          {q:"Quel pays est célèbre pour le manga ?",o:["Chine","Japon","Corée","Thaïlande"],b:1},
+          {q:"Quel instrument possède 88 touches ?",o:["Piano","Guitare","Harpe","Violon"],b:0},
+          {q:"Quel plat est associé à l’Italie ?",o:["Sushi","Pizza","Tacos","Couscous"],b:1},
+          {q:"Quel pays est célèbre pour le flamenco ?",o:["Italie","Portugal","Espagne","Grèce"],b:1},
+          {q:"Quel pays est célèbre pour Bollywood ?",o:["Chine","Corée","Japon","Inde"],b:3},
+          {q:"Quel pays est célèbre pour la k-pop ?",o:["Chine","Japon","Corée du Sud","Thaïlande"],b:2},
+          {q:"Quel pays est célèbre pour le carnaval de Rio ?",o:["Argentine","Brésil","Chili","Mexique"],b:1},
+          {q:"Quel pays est célèbre pour les tacos ?",o:["Mexique","Argentine","Brésil","Chili"],b:0},
+          {q:"Quel pays est célèbre pour la baguette ?",o:["Belgique","Italie","Espagne","France"],b:3},
+          {q:"Quel pays est célèbre pour le couscous ?",o:["Maroc","Italie","Grèce","Portugal"],b:0},
+          {q:"Quel pays est célèbre pour le tango ?",o:["Brésil","Chili","Argentine","Uruguay"],b:2},
+          {q:"Quel pays est célèbre pour les pyramides ?",o:["Mexique","Égypte","Pérou","Grèce"],b:1},
+          {q:"Quel pays est célèbre pour les Highlands et le kilt ?",o:["Irlande","Écosse","Pays de Galles","Angleterre"],b:1},
+          {q:"Quel pays est célèbre pour le reggae ?",o:["États-Unis","Jamaïque","Brésil","Afrique du Sud"],b:1},
+          {q:"Quel pays est célèbre pour le fromage et le vin ?",o:["France","Allemagne","Espagne","Portugal"],b:0},
+          {q:"Quel pays est célèbre pour les mangas et les animés ?",o:["Chine","Japon","Corée","Thaïlande"],b:1},
+          {q:"Quel pays est célèbre pour la cuisine pho ?",o:["Vietnam","Thaïlande","Chine","Corée"],b:0},
+          {q:"Quel pays est célèbre pour la cuisine curry et naan ?",o:["Chine","Inde","Japon","Thaïlande"],b:1},
+          {q:"Quel pays est célèbre pour la cuisine tapas ?",o:["Italie","Grèce","Espagne","Portugal"],b:2},
+          {q:"Quel pays est célèbre pour la cuisine poutine ?",o:["États-Unis","Canada","France","Belgique"],b:1}
+        ],
+        facile: [
+  {q:"Quel est le symbole du Canada ?",o:["Aigle","Érable","Lion","Ours"],b:1},
+  {q:"Quelle feuille figure sur le drapeau du Canada ?",o:["Chêne","Érable","Olivier","Palmier"],b:1},
+  {q:"Quelle est la capitale du Canada ?",o:["Toronto","Montréal","Ottawa","Vancouver"],b:2},
+  {q:"Dans quel pays se trouve la tour Eiffel ?",o:["Italie","France","Espagne","Allemagne"],b:1},
+  {q:"Dans quel pays se trouve la muraille de Chine ?",o:["Japon","Inde","Corée","Chine"],b:3},
+  {q:"Dans quel pays se trouve le Taj Mahal ?",o:["Pakistan","Inde","Bangladesh","Sri Lanka"],b:1},
+  {q:"Dans quel pays se trouve la statue de la Liberté ?",o:["Canada","États-Unis","France","Mexique"],b:1},
+  {q:"Dans quel pays se trouve le Colisée ?",o:["Grèce","Italie","Espagne","Portugal"],b:1},
+  {q:"Dans quel pays se trouve le Machu Picchu ?",o:["Mexique","Pérou","Brésil","Argentine"],b:1},
+  {q:"Dans quel pays se trouve la pyramide de Khéops ?",o:["Grèce","Égypte","Turquie","Italie"],b:1},
+  {q:"Quel animal est symbole de la Chine ?",o:["Tigre","Panda","Lion","Aigle"],b:1},
+  {q:"Quel animal est symbole de l’Australie ?",o:["Koala","Kangourou","Émeu","Dingo"],b:1},
+  {q:"Quel animal est symbole de la Russie ?",o:["Ours","Loup","Aigle","Renard"],b:0},
+  {q:"Quel animal est symbole des États-Unis ?",o:["Loup","Bison","Ours","Aigle"],b:3},
+  {q:"Quel animal est symbole de l’Inde ?",o:["Tigre","Lion","Éléphant","Paon"],b:0},
+  {q:"Quel est le plat typique de l’Italie ?",o:["Sushi","Pizza","Tacos","Couscous"],b:1},
+  {q:"Quel est le plat typique du Japon ?",o:["Pizza","Sushi","Tacos","Couscous"],b:1},
+  {q:"Quel est le plat typique du Mexique ?",o:["Pizza","Sushi","Tacos","Couscous"],b:2},
+  {q:"Quel est le plat typique de la France ?",o:["Poutine","Croissant","Sushi","Tacos"],b:1},
+  {q:"Quel est le plat typique du Québec ?",o:["Poutine","Pizza","Sushi","Tacos"],b:0}
+],
+        moyen: [
+  {q:"Dans quel pays parle-t-on principalement le portugais ?",o:["Espagne","Portugal","Italie","France"],b:1},
+  {q:"Dans quel pays parle-t-on principalement l’espagnol ?",o:["Brésil","Mexique","États-Unis","Portugal"],b:1},
+  {q:"Dans quel pays parle-t-on principalement l’allemand ?",o:["Espagne","Italie","France","Allemagne"],b:3},
+  {q:"Dans quel pays parle-t-on principalement le japonais ?",o:["Chine","Corée","Japon","Thaïlande"],b:2},
+  {q:"Dans quel pays parle-t-on principalement le mandarin ?",o:["Japon","Chine","Corée","Vietnam"],b:1},
+  {q:"Dans quel pays parle-t-on principalement l’arabe ?",o:["Égypte","Inde","Brésil","Russie"],b:0},
+  {q:"Dans quel pays parle-t-on principalement le hindi ?",o:["Pakistan","Inde","Bangladesh","Sri Lanka"],b:1},
+  {q:"Dans quel pays parle-t-on principalement le russe ?",o:["Lettonie","Ukraine","Pologne","Russie"],b:3},
+  {q:"Dans quel pays parle-t-on principalement le grec ?",o:["Italie","Grèce","Turquie","Chypre"],b:1},
+  {q:"Dans quel pays parle-t-on principalement le coréen ?",o:["Chine","Japon","Corée du Sud","Thaïlande"],b:2},
+  {q:"Quel pays est célèbre pour le flamenco ?",o:["Portugal","Espagne","Italie","France"],b:1},
+  {q:"Quel pays est célèbre pour le tango ?",o:["Brésil","Argentine","Mexique","Chili"],b:1},
+  {q:"Quel pays est célèbre pour le reggae ?",o:["Jamaïque","États-Unis","Canada","Brésil"],b:0},
+  {q:"Quel pays est célèbre pour le k-pop ?",o:["Japon","Chine","Corée du Sud","Thaïlande"],b:2},
+  {q:"Quel pays est célèbre pour le Bollywood ?",o:["Pakistan","Sri Lanka","Bangladesh","Inde"],b:3},
+  {q:"Quel pays est célèbre pour les mangas ?",o:["Chine","Japon","Corée","Thaïlande"],b:1},
+  {q:"Quel pays est célèbre pour les animes ?",o:["Thaïlande","Corée","Chine","Japon"],b:3},
+  {q:"Quel pays est célèbre pour les pyramides ?",o:["Grèce","Égypte","Mexique","Pérou"],b:1},
+  {q:"Quel pays est célèbre pour les temples mayas ?",o:["Mexique","Pérou","Brésil","Argentine"],b:0},
+  {q:"Quel pays est célèbre pour les temples incas ?",o:["Mexique","Pérou","Brésil","Argentine"],b:1}
+],
+        difficile: [
+  {q:"Dans quel pays se trouve le site d’Angkor Wat ?",o:["Thaïlande","Cambodge","Vietnam","Laos"],b:1},
+  {q:"Dans quel pays se trouve le site de Petra ?",o:["Jordanie","Égypte","Israël","Liban"],b:0},
+  {q:"Dans quel pays se trouve le site de Chichén Itzá ?",o:["Pérou","Bolivie","Guatemala","Mexique"],b:3},
+  {q:"Dans quel pays se trouve le site de Stonehenge ?",o:["Irlande","Angleterre","Écosse","Pays de Galles"],b:1},
+  {q:"Dans quel pays se trouve le site de Pompéi ?",o:["Grèce","Turquie","Italie","France"],b:2},
+  {q:"Dans quel pays se trouve le site de la Cité interdite ?",o:["Japon","Chine","Corée","Vietnam"],b:1},
+  {q:"Dans quel pays se trouve le site de Borobudur ?",o:["Inde","Malaisie","Thaïlande","Indonésie"],b:3},
+  {q:"Dans quel pays se trouve le site de la Sagrada Família ?",o:["France","Italie","Espagne","Portugal"],b:2},
+  {q:"Dans quel pays se trouve le site de l’Alhambra ?",o:["Portugal","Espagne","Italie","France"],b:1},
+  {q:"Dans quel pays se trouve le site de Neuschwanstein ?",o:["Autriche","Suisse","Allemagne","France"],b:2},
+  {q:"Quel pays est célèbre pour le carnaval de Rio ?",o:["Brésil","Argentine","Mexique","Colombie"],b:0},
+  {q:"Quel pays est célèbre pour le carnaval de Venise ?",o:["France","Italie","Espagne","Portugal"],b:1},
+  {q:"Quel pays est célèbre pour la fête des morts (Día de los Muertos) ?",o:["Brésil","Mexique","Argentine","Chili"],b:1},
+  {q:"Quel pays est célèbre pour la fête de Holi ?",o:["Pakistan","Inde","Bangladesh","Sri Lanka"],b:1},
+  {q:"Quel pays est célèbre pour la fête de la mi-automne ?",o:["Chine","Japon","Corée","Vietnam"],b:0},
+  {q:"Quel pays est célèbre pour la fête de la Saint-Patrick ?",o:["Écosse","Irlande","Angleterre","Pays de Galles"],b:1},
+  {q:"Quel pays est célèbre pour la fête de la Saint-Jean au Québec ?",o:["Canada","France","Belgique","Suisse"],b:0},
+  {q:"Quel pays est célèbre pour la fête nationale du 14 juillet ?",o:["Suisse","Belgique","France","Canada"],b:2},
+  {q:"Quel pays est célèbre pour la fête nationale du 4 juillet ?",o:["Canada","États-Unis","Mexique","Royaume-Uni"],b:1},
+  {q:"Quel pays est célèbre pour la fête nationale du 1er juillet ?",o:["Canada","États-Unis","France","Mexique"],b:0}
+],
+      },
+
+      art: {
+        revision: [
+          {q:"Qui a peint la Joconde ?",o:["Van Gogh","Monet","Picasso","Léonard de Vinci"],b:3},
+          {q:"Quel art utilise des pinceaux et de la peinture ?",o:["Sculpture","Peinture","Danse","Musique"],b:1},
+          {q:"Quel instrument se joue avec un archet ?",o:["Flûte","Piano","Violon","Trompette"],b:2},
+          {q:"Quel artiste est célèbre pour ses tournesols ?",o:["Monet","Van Gogh","Picasso","Rembrandt"],b:1},
+          {q:"Quel art consiste à jouer un rôle sur scène ?",o:["Danse","Théâtre","Peinture","Musique"],b:1},
+          {q:"Quel instrument possède des touches noires et blanches ?",o:["Guitare","Piano","Violon","Flûte"],b:1},
+          {q:"Quel art utilise l’argile ?",o:["Peinture","Sculpture","Danse","Musique"],b:1},
+          {q:"Quel artiste est célèbre pour le cubisme ?",o:["Picasso","Monet","Van Gogh","Rembrandt"],b:0},
+          {q:"Quel art consiste à créer des films ?",o:["Peinture","Théâtre","Danse","Cinéma"],b:0},
+          {q:"Quel instrument est typique de la musique classique ?",o:["Synthé","Violon","Basse","DJ"],b:1},
+          {q:"Quel artiste est célèbre pour la Chapelle Sixtine ?",o:["Michel-Ange","Raphaël","Donatello","Léonard de Vinci"],b:0},
+          {q:"Quel mouvement artistique est associé à Monet ?",o:["Expressionnisme","Cubisme","Surréalisme","Impressionnisme"],b:3},
+          {q:"Quel artiste a peint Guernica ?",o:["Picasso","Dali","Matisse","Kandinsky"],b:0},
+          {q:"Quel compositeur a écrit La Flûte enchantée ?",o:["Mozart","Beethoven","Bach","Chopin"],b:0},
+          {q:"Quel artiste est célèbre pour ses montres molles ?",o:["Picasso","Dali","Magritte","Miro"],b:1},
+          {q:"Quel mouvement artistique est associé à Andy Warhol ?",o:["Cubisme","Pop art","Surréalisme","Impressionnisme"],b:1},
+          {q:"Quel artiste est célèbre pour ses nymphéas ?",o:["Monet","Manet","Renoir","Cézanne"],b:0},
+          {q:"Quel compositeur a écrit Le Lac des cygnes ?",o:["Liszt","Chopin","Tchaïkovski","Brahms"],b:2},
+          {q:"Quel artiste est célèbre pour ses autoportraits ?",o:["Rembrandt","Van Gogh","Monet","Picasso"],b:1},
+          {q:"Quel art consiste à écrire des poèmes ?",o:["Peinture","Poésie","Danse","Musique"],b:1}
+        ],
+        facile: [
+  {q:"Qui a peint La Nuit étoilée ?",o:["Monet","Van Gogh","Picasso","Dali"],b:1},
+  {q:"Quel instrument possède des cordes ?",o:["Flûte","Piano","Guitare","Trompette"],b:2},
+  {q:"Quel art utilise de la peinture ?",o:["Danse","Musique","Peinture","Théâtre"],b:2},
+  {q:"Quel artiste est célèbre pour ses nymphéas ?",o:["Monet","Van Gogh","Picasso","Matisse"],b:0},
+  {q:"Quel instrument se joue avec un archet ?",o:["Piano","Trompette","Flûte","Violon"],b:3},
+  {q:"Quel art consiste à jouer un rôle ?",o:["Peinture","Théâtre","Musique","Danse"],b:1},
+  {q:"Quel artiste est célèbre pour le cubisme ?",o:["Picasso","Monet","Van Gogh","Rembrandt"],b:0},
+  {q:"Quel instrument est typique du jazz ?",o:["Violon","Harpe","Trompette","Flûte"],b:2},
+  {q:"Quel artiste a peint La Joconde ?",o:["Van Gogh","Monet","Picasso","Léonard de Vinci"],b:3},
+  {q:"Quel art utilise l’argile ?",o:["Sculpture","Peinture","Danse","Musique"],b:0},
+  {q:"Quel compositeur a écrit La Flûte enchantée ?",o:["Bach","Beethoven","Mozart","Chopin"],b:2},
+  {q:"Quel instrument possède des touches noires et blanches ?",o:["Guitare","Piano","Violon","Flûte"],b:1},
+  {q:"Quel artiste est célèbre pour ses tournesols ?",o:["Monet","Picasso","Van Gogh","Rembrandt"],b:2},
+  {q:"Quel art consiste à créer des films ?",o:["Cinéma","Théâtre","Danse","Peinture"],b:0},
+  {q:"Quel instrument est typique de la musique classique ?",o:["Synthé","Violon","Basse","DJ"],b:1},
+  {q:"Quel artiste est célèbre pour la Chapelle Sixtine ?",o:["Donatello","Raphaël","Michel-Ange","Léonard de Vinci"],b:2},
+  {q:"Quel mouvement artistique est associé à Monet ?",o:["Impressionnisme","Cubisme","Surréalisme","Expressionnisme"],b:0},
+  {q:"Quel artiste a peint Guernica ?",o:["Kandinsky","Dali","Matisse","Picasso"],b:3},
+  {q:"Quel compositeur a écrit Le Lac des cygnes ?",o:["Brahms","Chopin","Liszt","Tchaïkovski"],b:3},
+  {q:"Quel art consiste à écrire des poèmes ?",o:["Peinture","Poésie","Danse","Musique"],b:1}
+],
+        moyen: [
+  {q:"Quel artiste est associé au surréalisme ?",o:["Dali","Monet","Van Gogh","Picasso"],b:0},
+  {q:"Quel mouvement artistique utilise des couleurs vives et des formes simples ?",o:["Cubisme","Pop art","Surréalisme","Impressionnisme"],b:1},
+  {q:"Quel compositeur est devenu sourd ?",o:["Mozart","Beethoven","Bach","Chopin"],b:1},
+  {q:"Quel artiste est célèbre pour ses autoportraits ?",o:["Rembrandt","Picasso","Monet","Van Gogh"],b:3},
+  {q:"Quel instrument est un instrument à vent ?",o:["Guitare","Flûte","Piano","Violon"],b:1},
+  {q:"Quel artiste est associé au fauvisme ?",o:["Matisse","Picasso","Monet","Van Gogh"],b:0},
+  {q:"Quel mouvement artistique représente la lumière et les impressions ?",o:["Cubisme","Impressionnisme","Surréalisme","Expressionnisme"],b:1},
+  {q:"Quel compositeur est associé au baroque ?",o:["Mozart","Chopin","Bach","Beethoven"],b:2},
+  {q:"Quel instrument est typique du rock ?",o:["Violon","Guitare électrique","Flûte","Harpe"],b:1},
+  {q:"Quel artiste est célèbre pour ses montres molles ?",o:["Picasso","Dali","Magritte","Miro"],b:1},
+  {q:"Quel mouvement artistique est associé à Andy Warhol ?",o:["Impressionnisme","Cubisme","Surréalisme","Pop art"],b:3},
+  {q:"Quel artiste est célèbre pour ses portraits de femmes cubistes ?",o:["Picasso","Monet","Van Gogh","Matisse"],b:0},
+  {q:"Quel compositeur est associé au romantisme ?",o:["Bach","Chopin","Mozart","Beethoven"],b:1},
+  {q:"Quel instrument est typique du blues ?",o:["Harmonica","Harpe","Violon","Flûte"],b:0},
+  {q:"Quel artiste est célèbre pour ses natures mortes ?",o:["Picasso","Monet","Van Gogh","Cézanne"],b:3},
+  {q:"Quel mouvement artistique utilise des formes géométriques ?",o:["Surréalisme","Impressionnisme","Cubisme","Fauvisme"],b:2},
+  {q:"Quel compositeur a écrit la Symphonie du Nouveau Monde ?",o:["Chopin","Mozart","Bach","Dvořák"],b:3},
+  {q:"Quel artiste est célèbre pour ses sculptures en marbre ?",o:["Picasso","Michel-Ange","Monet","Van Gogh"],b:1},
+  {q:"Quel instrument est typique du métal ?",o:["Guitare électrique","Flûte","Violon","Harpe"],b:0},
+  {q:"Quel artiste est célèbre pour ses œuvres abstraites ?",o:["Van Gogh","Monet","Kandinsky","Picasso"],b:2}
+],
+        difficile: [
+  {q:"Quel artiste a peint Les Ménines ?",o:["Goya","Velázquez","Picasso","El Greco"],b:1},
+  {q:"Quel compositeur a écrit L’Art de la fugue ?",o:["Bach","Mozart","Beethoven","Chopin"],b:0},
+  {q:"Quel mouvement artistique est associé à Pollock ?",o:["Fauvisme","Cubisme","Surréalisme","Expressionnisme abstrait"],b:3},
+  {q:"Quel artiste a peint Le Cri ?",o:["Kandinsky","Munch","Dali","Picasso"],b:1},
+  {q:"Quel compositeur a écrit La Moldau ?",o:["Smetana","Dvořák","Bach","Mozart"],b:0},
+  {q:"Quel artiste a peint Olympia ?",o:["Cézanne","Monet","Manet","Renoir"],b:2},
+  {q:"Quel mouvement artistique est associé à Rothko ?",o:["Fauvisme","Cubisme","Surréalisme","Color field"],b:3},
+  {q:"Quel compositeur a écrit Le Sacre du printemps ?",o:["Debussy","Stravinsky","Ravel","Brahms"],b:1},
+  {q:"Quel artiste a peint Les Demoiselles d’Avignon ?",o:["Monet","Matisse","Picasso","Van Gogh"],b:2},
+  {q:"Quel compositeur a écrit La Mer ?",o:["Debussy","Ravel","Bach","Mozart"],b:0},
+  {q:"Quel artiste est associé au pointillisme ?",o:["Picasso","Monet","Van Gogh","Seurat"],b:3},
+  {q:"Quel compositeur a écrit Boléro ?",o:["Ravel","Debussy","Chopin","Bach"],b:0},
+  {q:"Quel artiste a peint La Jeune Fille à la perle ?",o:["Rubens","Rembrandt","Vermeer","Goya"],b:2},
+  {q:"Quel compositeur a écrit La Passion selon saint Matthieu ?",o:["Bach","Mozart","Beethoven","Chopin"],b:0},
+  {q:"Quel artiste a peint La Ronde de nuit ?",o:["Goya","Vermeer","Rubens","Rembrandt"],b:3},
+  {q:"Quel compositeur a écrit La Traviata ?",o:["Verdi","Puccini","Mozart","Bach"],b:0},
+  {q:"Quel artiste est associé au surréalisme belge ?",o:["Dali","Magritte","Miro","Picasso"],b:1},
+  {q:"Quel compositeur a écrit Carmen ?",o:["Puccini","Verdi","Bizet","Mozart"],b:2},
+  {q:"Quel artiste a peint Le Jardin des délices ?",o:["Bruegel","Bosch","Goya","Rubens"],b:1},
+  {q:"Quel compositeur a écrit La Symphonie Fantastique ?",o:["Berlioz","Beethoven","Mozart","Bach"],b:0}
+],
+      },
+
+      langues: {
+        revision: [
+
+  { q:"Comment dit-on bonjour en anglais ?",
+    o:["Ciao","Hello","Hola","Salut"], b:1 },
+  { q:"Quel terme désigne l’étude du langage humain ?",
+    o:["Grammaire","Linguistique","Phonétique","Sémantique"], b:1 },
+  { q:"Comment dit-on oui en allemand ?",
+    o:["Si","Da","Yes","Ja"], b:3 },
+  { q:"Quelle langue possède le plus grand nombre de locuteurs natifs ?",
+    o:["Anglais","Espagnol","Mandarin","Arabe"], b:2 },
+  { q:"Quel alphabet utilise le français ?",
+    o:["Latin","Arabe","Cyrillique","Grec"], b:0 },
+  { q:"Comment dit-on merci en anglais ?",
+    o:["Gracias","Danke","Merci","Thanks"], b:3 },
+  { q:"Comment dit-on « paix » en hébreu ?",
+    o:["Pax","Shalom","Santi","Salam"], b:1 },
+  { q:"Quelle langue est parlée au Brésil ?",
+    o:["Portugais","Français","Créole","Espagnol"], b:0 },
+  { q:"Quel terme désigne un mot qui ressemble dans deux langues ?",
+    o:["Antonyme","Cognat","Paronyme","Homonyme"], b:1 },
+  { q:"Comment dit-on bonjour en italien ?",
+    o:["Buongiorno","Hola","Ciao","Salut"], b:0 },
+  { q:"Quelle langue est écrite de droite à gauche ?",
+    o:["Français","Swahili","Coréen","Arabe"], b:3 },
+  { q:"Comment dit-on ami en arabe (dialecte courant) ?",
+    o:["Sadiq","Rafiq","Sahbi","Habibi"], b:2 },
+  { q:"Quel terme désigne la manière dont les mots forment des phrases ?",
+    o:["Morphologie","Syntaxe","Phonologie","Pragmatique"], b:1 },
+  { q:"Comment dit-on oui en espagnol ?",
+    o:["Yes","Ja","Si","Oui"], b:2 },
+  { q:"Quelle langue utilise un syllabaire appelé kana ?",
+    o:["Japonais","Thaï","Coréen","Mongol"], b:0 },
+  { q:"Comment dit-on neige en inuit (inuktitut) ?",
+    o:["Aput","Siku","Qanik","Anana"], b:0 },
+  { q:"Quel phénomène décrit la disparition d’une langue au profit d’une autre ?",
+    o:["Créolisation","Shift linguistique","Pidginisation","Diglossie"], b:1 },
+  { q:"Comment dit-on esprit (âme intérieure) en japonais ?",
+    o:["Shinzō","Tamashii","Seishin","Kokoro"], b:3 },
+  { q:"Quel alphabet est utilisé pour écrire le russe ?",
+    o:["Latin","Arabe","Cyrillique","Grec"], b:2 },
+  { q:"Comment dit-on bonne nuit en anglais ?",
+    o:["Goodbye","Good night","Good morning","Good evening"], b:1 }
+],
+        facile: [
+  {q:"Comment dit-on bonjour en anglais ?",o:["Hello","Hola","Ciao","Salut"],b:0},
+  { q:"Quel terme désigne l’étude du langage humain ?", 
+    o:["Sémantique","Phonétique","Grammaire","Linguistique"], b:3 },
+  {q:"Comment dit-on oui en allemand ?",o:["Oui","Yes","Ja","Si"],b:2},
+  { q:"Quelle langue est la plus parlée au monde ?", 
+    o:["Anglais","Mandarin","Espagnol","Arabe"], b:1 },
+  { q:"Quel alphabet utilise le français ?", 
+    o:["Grec","Cyrillique","Latin","Arabe"], b:2 },
+  {q:"Comment dit-on merci en anglais ?",o:["Thanks","Gracias","Merci","Danke"],b:0},
+  {q:"Comment dit-on bonjour en allemand ?",o:["Hello","Hola","Guten Tag","Ciao"],b:2},
+  {q:"Comment dit-on s’il vous plaît en anglais ?",o:["Merci","Please","Sorry","Por favor"],b:1},
+  {q:"Comment dit-on pardon en anglais ?",o:["Sorry","Merci","Hello","Goodbye"],b:0},
+  {q:"Comment dit-on oui en espagnol ?",o:["Yes","Si","Ja","Oui"],b:1},
+  { q:"Quelle langue est parlée au Brésil ?", 
+    o:["Créole","Espagnol","Français","Portugais"], b:3 },
+  { q:"Quelle langue est parlée en Inde ?", 
+    o:["Anglais","Amharique","Hindi","Maori"], b:2 },
+  {q:"Comment dit-on bonjour en italien ?",o:["Hola","Ciao","Buongiorno","Salut"],b:2},
+  { q:"Quelle langue est parlée en Égypte moderne ?", 
+    o:["Arabe","Hébreu","Turc","Grec"], b:0 },
+  { q:"Quel terme désigne les lettres utilisées pour écrire ?", 
+    o:["Alphabet","Syllabaire","Logogramme","Abjad"], b:0 },
+  {q:"Comment dit-on bonne nuit en anglais ?",o:["Good morning","Good night","Good evening","Goodbye"],b:1},
+  {q:"Comment dit-on merci en italien ?",o:["Gracias","Merci","Per favore","Grazie"],b:3},
+  {q:"Comment dit-on bonjour en portugais ?",o:["Dia","Kamusta","Olá","Ciao"],b:2},
+   { q:"Quel pays utilise principalement l’anglais ?", 
+    o:["États-Unis","Brésil","Chine","Égypte"], b:0 },
+  {q:"Comment dit-on salut en anglais ?",o:["Ciao","Hola","Hi","Bye"],b:2}
+],
+        moyen: [
+  { q:"Quelle langue possède le plus grand nombre de locuteurs natifs au monde ?",
+    o:["Espagnol","Anglais","Arabe","Mandarin"], b:3 },
+  { q:"Comment dit‑on « oui » en russe ?",
+    o:["Da","Oui","Si","Ja"], b:0 },
+  { q:"Quel alphabet est utilisé pour écrire le grec moderne ?",
+    o:["Alphabet latin","Alphabet grec","Alphabet cyrillique","Alphabet arménien"], b:1 },
+  { q:"Quel terme désigne l’étude des sons d’une langue ?",
+    o:["Sémantique","Morphologie","Syntaxe","Phonétique"], b:3 },
+  { q:"Quelle langue est majoritairement parlée en Éthiopie ?",
+    o:["Somali","Swahili","Amharique","Tigrinya"], b:2 },
+  { q:"Quel terme désigne un mot qui ressemble et a le même sens dans deux langues ?",
+    o:["Cognat","Homonyme","Paronyme","Antonyme"], b:0 },
+  { q:"Quelle langue utilise un système d’écriture syllabique appelé ‘kana’ ?",
+    o:["Coréen","Japonais","Thaï","Mongol"], b:1 },
+    { q:"Comment dit‑on « bonjour » en tagalog ?",
+    o:["Oo","Salamat","Kamusta","Hindi"], b:2 },
+    { q:"Comment dit‑on « bonjour » en allemand ?",
+    o:["Guten Tag","Buongiorno","Hola","Hej"], b:0 },
+  { q:"Quel est le nom de la famille de langues incluant le français, l’espagnol et l’italien ?",
+    o:["Langues sino-tibétaines","Langues germaniques","Langues slaves","Langues romanes"], b:3 },
+{ q:"Quelle langue est écrite de droite à gauche ?",
+    o:["Arabe","Français","Swahili","Coréen"], b:0 },
+  { q:"Comment dit‑on « ami » en arabe (dialecte courant) ?",
+    o:["Sadiq","Habibi","Rafiq","Sahbi"], b:3 },
+  { q:"Quel terme désigne la manière dont les mots se combinent pour former des phrases ?",
+    o:["Phonologie","Syntaxe","Pragmatique","Morphologie"], b:1 },
+  { q:"Quelle langue est écrite avec l’alphabet hangul ?",
+    o:["Coréen","Japonais","Vietnamien","Thaï"], b:0 },
+  { q:"Quel phénomène linguistique décrit l’évolution d’une langue au fil du temps ?",
+    o:["Changement linguistique","Variation sociale","Emprunt lexical","Créolisation"], b:0 },
+  { q:"Quel terme désigne deux mots qui se prononcent pareil mais n’ont pas le même sens ?",
+    o:["Paronymes","Synonymes","Antonymes","Homophones"], b:3 },
+ { q:"Quel alphabet est utilisé pour écrire le russe ?",
+    o:["Arabe","Latin","Cyrillique","Grec"], b:2 },
+  { q:"Quel terme désigne une langue parlée dans une région précise mais non officielle ?",
+    o:["Dialecte","Créole","Registre","Sociolecte"], b:0 },
+   { q:"Quelle langue est majoritairement parlée en Éthiopie ?",
+    o:["Swahili","Amharique","Somali","Tigrinya"], b:1 },
+  { q:"Quelle langue est réputée pour son alphabet de 33 lettres et ses déclinaisons complexes ?",
+    o:["Russe","Italien","Turc","Suédois"], b:0 }
+],
+        difficile: [
+    { q:"Quelle langue est connue pour son système de classes nominales (ex.: mu‑ntu, ba‑ntu) ?",
+    o:["Langues bantoues","Langues romanes","Langues germaniques","Langues celtiques"], b:0 },
+    { q:"Quelle langue est connue pour avoir des clics dans son système phonétique ?",
+    o:["Turc","Hindi","Finnois","Xhosa"], b:3 },
+      { q:"Comment dit‑on « ami » en yoruba (Nigeria) ?",
+    o:["Ile","Baba","Omo","Ọrẹ"], b:3 },
+    { q:"Quelle langue est la plus ancienne encore utilisée aujourd’hui ?",
+    o:["Le latin","Le grec moderne","Le tamoul","Le persan"], b:2 },
+     { q:"Quel type de langue utilise principalement des mots isolés sans flexions ?",
+    o:["Langue agglutinante","Langue isolante","Langue flexionnelle","Langue polysynthétique"], b:1 },
+      { q:"Quel terme désigne un mot qui ressemble et a le même sens dans deux langues ?",
+    o:["Antonyme","Homonyme","Paronyme","Cognat"], b:3 },
+    { q:"Quel pays compte le plus grand nombre de langues vivantes ?",
+    o:["Papouasie‑Nouvelle‑Guinée","Inde","Nigeria","Indonésie"], b:0 },
+    { q:"Quel terme désigne la plus petite unité de sens dans une langue ?",
+    o:["Morphème","Phonème","Graphème","Lexème"], b:0 },
+    { q:"Comment dit‑on « neige » en inuit (inuktitut) ?",
+    o:["Qanik","Aput","Anana","Siku"], b:1 },
+    { q:"Quel phénomène décrit la disparition progressive d’une langue au profit d’une autre ?", 
+  o:["Shift linguistique","Créolisation","Pidginisation","Diglossie"], b:0 },
+{ q:"Comment dit‑on « mer » en samoan ?",
+    o:["Gogo","Sami","Samiu","Sami’a"], b:1 },
+{ q:"Quelle langue est réputée pour son système de tons complexes (jusqu’à 9) ?", 
+    o:["Yoruba","Mandarin","Thaï","Vietnamien"], b:3 }, 
+ { q:"Quelle langue caucasienne est connue pour avoir plus de 50 consonnes ?", 
+    o:["Géorgien","Tchétchène","Abkhaze","Ossète"], b:2 }, 
+ { q:"Quelle langue est réputée pour sa structure polysynthétique extrême ?", 
+    o:["Inuktitut","Basque","Finnois","Sanskrit"], b:0 },  
+{ q:"Comment dit‑on « esprit » en japonais (sens : âme, cœur intérieur) ?", 
+    o:["Seishin","Tamashii","Shinzō","Kokoro"], b:3 }, 
+{ q:"Comment dit‑on « sagesse » en grec ancien ?", 
+   o:["Sophia","Phronesis","Logos","Arete"], b:0 }, 
+{ q:"Comment dit‑on « silence » en latin ?", 
+   o:["Mutus","Tacitus","Silentium","Quies"], b:2 }, 
+{ q:"Comment dit‑on « étoile » en arabe littéraire ?", 
+   o:["Najm","Qamar","Shams","Layl"], b:0 }, 
+{ q:"Comment dit‑on « paix » en coréen ?", 
+   o:["Sarang","Haneul","Bada","Pyeonghwa"], b:3 }, 
+{ q:"Quel phénomène décrit la création d’un nouveau mot par combinaison de deux mots existants ?", 
+   o:["Conversion","Mot-valise","Dérivation","Composition savante"], b:1 }
+],
+      },
+
+      economie: {
+        revision: [
+          {q:"Comment appelle-t-on l’argent utilisé dans un pays ?",o:["Devise","Billet","Compte","Crédit"],b:0},
+          {q:"Quelle est la monnaie utilisée au Canada ?",o:["Livre","Euro","Dollar canadien","Peso"],b:2},
+          {q:"Quelle est la monnaie utilisée aux États-Unis ?",o:["Dollar canadien","Dollar américain","Euro","Yen"],b:1},
+          { q:"Que signifie 'budget' ?", o:["Plan pour l’argent","Recette de cuisine","Programme TV","Carte routière"],b:0 },
+          {q:"Comment appelle-t-on le prix payé pour un produit ?",o:["Salaire","Taxe","Prix","Profit"],b:2},
+          {q:"Comment appelle-t-on l’argent gagné par un travail ?",o:["Profit","Salaire","Taxe","Dette"],b:1},
+          {q:"Comment appelle-t-on l’argent que l’on doit à quelqu’un ?",o:["Épargne","Salaire","Profit","Dette"],b:3},
+          {q:"Comment appelle-t-on l’argent mis de côté ?",o:["Dette","Épargne","Taxe","Salaire"],b:1},
+          {q:"Comment appelle-t-on l’argent que l’État prélève sur les revenus ?",o:["Profit","Salaire","Taxe","Dette"],b:2},
+          {q:"Comment appelle-t-on une personne qui achète un produit ?",o:["Patron","Consommateur","Banquier","Producteur"],b:3},
+          {q:"Comment appelle-t-on une personne qui vend un produit ?",o:["Consommateur","Producteur","Client","Employé"],b:1},
+          {q:"Comment appelle-t-on une entreprise qui fabrique des biens ?",o:["Banque","École","Usine","Hôpital"],b:2},
+          { q:"Quel métier conseille les gens sur leur argent ?", o:["Conseiller financier","Cuisinier","Professeur","Chauffeur"],b:0 },
+          {q:"Comment appelle-t-on l’augmentation générale des prix ?",o:["Exportation","Récession","Déflation","Inflation"],b:3},
+          {q:"Comment appelle-t-on la vente de produits à l’étranger ?",o:["Importation","Exportation","Inflation","Récession"],b:1},
+          {q:"Comment appelle-t-on l’achat de produits venant de l’étranger ?",o:["Importation","Exportation","Inflation","Récession"],b:0},
+          {q:"Comment appelle-t-on une personne qui dirige une entreprise ?",o:["Employé","Patron","Client","Banquier"],b:1},
+          {q:"Comment appelle-t-on l’endroit où l’on dépose son argent ?",o:["École","Usine","Magasin","Banque"],b:3},
+          {q:"Comment appelle-t-on l’argent reçu sans travailler (ex: cadeau) ?",o:["Salaire","Revenu","Don","Taxe"],b:2},
+          {q:"Comment appelle-t-on l’argent qu’on reçoit du gouvernement (ex: allocations) ?",o:["Salaire","Prestation","Dette","Profit"],b:1}
+        ],
+        facile: [
+    { q:"Quelle est la monnaie du Canada ?", o:["Dollar canadien","Euro","Yen","Livre"], b:0 },
+    { q:"Quelle est la monnaie du Japon ?", o:["Dollar","Yen","Euro","Peso"], b:1 },
+    { q:"Quelle est la monnaie des États-Unis ?", o:["Livre","Euro","Dollar américain","Rouble"], b:2 },
+    { q:"Quelle est la monnaie de la zone euro ?", o:["Euro","Dollar","Yen","Livre"], b:0 },
+    { q:"Quelle est la monnaie de la Thaïlande ?", o:["Dollar","Yen","Euro","Baht"], b:3 },
+    { q:"Quel métier travaille dans une banque ?", o:["Professeur","Banquier","Médecin","Cuisinier"], b:1 },
+    { q:"Quel métier tient les comptes d’une entreprise ?", o:["Pilote","Chirurgien","Comptable","Artiste"], b:2 },
+    { q:"Quel métier analyse les finances d’une entreprise ?", o:["Auditeur","Pompier","Professeur","Architecte"], b:0 },
+    { q:"Quel métier achète et vend des actions ?", o:["Plombier","Dentiste","Avocat","Trader"], b:3 },
+    { q:"Que représente un billet de banque ?", o:["Un passeport","Un ticket de cinéma","De l’argent","Un diplôme"], b:2 },
+    { q:"Que signifie 'économiser' ?", o:["Mettre de l’argent de côté","Tout dépenser","Emprunter","Perdre de l’argent"], b:0 },
+    { q:"Où garde-t-on souvent son argent ?", o:["Hôpital","Banque","École","Musée"], b:1 },
+    { q:"Comment appelle-t-on l’argent qu’on gagne en travaillant ?", o:["Salaire","Facture","Dette","Cadeau"], b:0 },
+    { q:"Comment appelle-t-on l’argent qu’on doit ?", o:["Prime","Salaire","Épargne","Dette"], b:3 },
+    { q:"Quel objet utilise-t-on pour payer sans argent liquide ?", o:["Carte bancaire","Stylo","Clé","Télécommande"], b:0 },
+    { q:"Comment appelle-t-on l’argent mis de côté ?", o:["Salaire","Dette","Épargne","Facture"], b:2 },
+    { q:"Quel métier conseille les gens sur leur argent ?", o:["Professeur","Cuisinier","Conseiller financier","Chauffeur"], b:2 },
+    { q:"Que signifie 'budget' ?", o:["Plan pour l’argent","Recette de cuisine","Programme TV","Carte routière"], b:0 },
+    { q:"Quel lieu vend des produits au public ?", o:["Magasin","Hôpital","École","Banque"], b:0 },
+    { q:"Comment appelle-t-on l’argent qu’on paie pour acheter quelque chose ?", o:["Salaire","Prix","Dette","Épargne"], b:1 }
+],
+        moyen: [
+  {q:"Comment appelle-t-on la différence entre revenus et dépenses ?",o:["Profit","Dette","Épargne","Taxe"],b:0},
+  {q:"Comment appelle-t-on l’argent placé pour faire des intérêts ?",o:["Épargne","Investissement","Dette","Taxe"],b:1},
+  {q:"Comment appelle-t-on une hausse rapide des prix ?",o:["Déflation","Hyperinflation","Récession","Stagnation"],b:1},
+  {q:"Comment appelle-t-on une baisse générale des prix ?",o:["Stagnation","Inflation","Récession","Déflation"],b:3},
+  {q:"Comment appelle-t-on une période de ralentissement économique ?",o:["Croissance","Inflation","Récession","Exportation"],b:2},
+  {q:"Comment appelle-t-on une entreprise qui domine un marché ?",o:["Monopole","Oligopole","Cartel","Coopérative"],b:0},
+  {q:"Comment appelle-t-on un groupe d’entreprises qui fixent les prix ensemble ?",o:["Monopole","Oligopole","Cartel","Coopérative"],b:2},
+  {q:"Comment appelle-t-on l’argent emprunté à une banque ?",o:["Dette","Épargne","Profit","Taxe"],b:0},
+  {q:"Comment appelle-t-on l’argent gagné par une entreprise après dépenses ?",o:["Taxe","Revenu","Dette","Profit"],b:3},
+  {q:"Comment appelle-t-on l’argent gagné avant dépenses ?",o:["Revenu","Profit","Dette","Taxe"],b:0},
+  {q:"Comment appelle-t-on une entreprise appartenant à ses membres ?",o:["Corporation","Monopole","Cartel","Coopérative"],b:3},
+  {q:"Comment appelle-t-on l’argent payé pour emprunter ?",o:["Intérêt","Taxe","Profit","Dette"],b:0},
+  {q:"Comment appelle-t-on l’argent reçu pour un travail horaire ?",o:["Profit","Revenu","Salaire","Prime"],b:2},
+  {q:"Comment appelle-t-on l’argent reçu pour un travail annuel ?",o:["Salaire","Revenu","Profit","Prime"],b:1},
+  {q:"Comment appelle-t-on l’argent qu’on doit rembourser ?",o:["Profit","Épargne","Dette","Taxe"],b:2},
+  {q:"Comment appelle-t-on un produit vendu à l’étranger ?",o:["Importation","Exportation","Inflation","Récession"],b:1},
+  {q:"Comment appelle-t-on un produit acheté de l’étranger ?",o:["Importation","Exportation","Inflation","Récession"],b:0},
+  {q:"Comment appelle-t-on l’argent mis dans un projet pour le faire grandir ?",o:["Taxe","Épargne","Dette","Investissement"],b:3},
+  {q:"Comment appelle-t-on une personne qui crée une entreprise ?",o:["Banquier","Employé","Entrepreneur","Client"],b:2},
+  {q:"Comment appelle-t-on l’argent que l’État utilise pour financer les services publics ?",o:["Taxe","Profit","Salaire","Dette"],b:0}
+],
+        difficile: [
+  {q:"Comment appelle-t-on une économie où l’offre et la demande déterminent les prix ?",o:["Économie planifiée","Économie mixte","Économie de marché","Économie fermée"],b:2},
+  {q:"Comment appelle-t-on une économie contrôlée par l’État ?",o:["Économie planifiée","Économie mixte","Économie de marché","Économie ouverte"],b:0},
+  {q:"Comment appelle-t-on la valeur totale des biens produits dans un pays ?",o:["PIB","PNB","IDH","IPC"],b:0},
+  {q:"Comment appelle-t-on la valeur totale des biens produits par les citoyens d’un pays ?",o:["PIB","PNB","IDH","IPC"],b:1},
+  {q:"Comment appelle-t-on l’indice qui mesure le coût de la vie ?",o:["PIB","PNB","IPC","IDH"],b:2},
+  {q:"Comment appelle-t-on l’indice qui mesure le développement humain ?",o:["PIB","PNB","IPC","IDH"],b:3},
+  {q:"Comment appelle-t-on une taxe sur les produits importés ?",o:["Tarif douanier","TVQ","TPS","Impôt"],b:0},
+  {q:"Comment appelle-t-on une période de croissance économique ?",o:["Dépression","Récession","Expansion","Stagnation"],b:2},
+  {q:"Comment appelle-t-on une période de chute économique sévère ?",o:["Récession","Dépression","Inflation","Stagnation"],b:1},
+  {q:"Comment appelle-t-on une entreprise qui vend des actions ?",o:["Société par actions","Coopérative","Monopole","Corporation publique"],b:0},
+  {q:"Comment appelle-t-on une entreprise appartenant à l’État ?",o:["Monopole","Coopérative","Corporation privée","Société d’État"],b:3},
+  {q:"Comment appelle-t-on une hausse du niveau général des salaires ?",o:["Récession","Déflation","Stagnation","Inflation salariale"],b:3},
+  {q:"Comment appelle-t-on une baisse du niveau général des salaires ?",o:["Déflation salariale","Inflation","Stagnation","Récession"],b:0},
+  {q:"Comment appelle-t-on la quantité de biens qu’un consommateur peut acheter ?",o:["Revenu","Pouvoir d’achat","Profit","Dette"],b:1},
+  {q:"Comment appelle-t-on l’argent qu’une entreprise doit à ses fournisseurs ?",o:["Profit","Actif","Capital","Passif"],b:3},
+  {q:"Comment appelle-t-on les biens possédés par une entreprise ?",o:["Actif","Passif","Capital","Profit"],b:0},
+  {q:"Comment appelle-t-on la richesse totale d’une entreprise ?",o:["Passif","Actif","Capital","Profit"],b:2},
+  {q:"Comment appelle-t-on une entreprise qui contrôle plusieurs étapes de production ?",o:["Intégration verticale","Monopole","Cartel","Coopérative"],b:0},
+  {q:"Comment appelle-t-on une entreprise qui contrôle plusieurs marchés différents ?",o:["Cartel","Monopole","Conglomérat","Coopérative"],b:2},
+  {q:"Comment appelle-t-on la valeur d’une monnaie par rapport à une autre ?",o:["PIB","Taux d’intérêt","Inflation","Taux de change"],b:3}
+],
+      },
+
+      sports: {
+        revision: [
+          {q:"Combien de joueurs par équipe au soccer sur le terrain ?",o:["9","10","11","12"],b:2},
+          {q:"Combien de points vaut un but au hockey ?",o:["1","2","3","4"],b:0},
+          {q:"Quel sport utilise un ballon ovale ?",o:["Soccer","Rugby","Basketball","Volleyball"],b:1},
+          {q:"Quel sport se joue avec une raquette et un volant ?",o:["Tennis","Ping-pong","Squash","Badminton"],b:3},
+          {q:"Quel sport se joue sur glace avec une rondelle ?",o:["Ski","Curling","Patinage artistique","Hockey"],b:3},
+          {q:"Quel sport se joue avec un panier et un ballon orange ?",o:["Soccer","Basketball","Handball","Rugby"],b:1},
+          {q:"Quel sport se joue avec une batte et une balle ?",o:["Tennis","Soccer","Baseball","Rugby"],b:2},
+          {q:"Quel sport se joue avec un filet haut et un ballon frappé avec les mains ?",o:["Basketball","Volleyball","Handball","Rugby"],b:1},
+          {q:"Quel sport se pratique en piscine avec des longueurs ?",o:["Water-polo","Natation","Plongeon","Surf"],b:1},
+          {q:"Quel sport consiste à courir sur une piste ?",o:["Marche","Saut en hauteur","Course","Lancer du poids"],b:2},
+          {q:"Quel sport utilise des skis sur la neige ?",o:["Snowboard","Ski alpin","Patinage","Luge"],b:1},
+          {q:"Quel sport utilise une planche sur la neige ?",o:["Ski","Luge","Patinage","Snowboard"],b:3},
+          {q:"Quel sport se joue avec une balle et un club sur un grand terrain ?",o:["Golf","Baseball","Tennis","Rugby"],b:0},
+          {q:"Quel sport se joue sur une table avec une petite balle et des raquettes ?",o:["Tennis","Ping-pong","Squash","Badminton"],b:1},
+          {q:"Quel sport se joue avec un ballon au pied et des buts ?",o:["Basketball","Rugby","Handball","Soccer"],b:3},
+          {q:"Quel sport se joue avec un ballon et des paniers ?",o:["Soccer","Rugby","Basketball","Handball"],b:2},
+          {q:"Quel sport se joue avec un ballon et un filet au centre du terrain ?",o:["Volleyball","Basketball","Rugby","Handball"],b:0},
+          {q:"Quel sport se joue avec une rondelle et des bâtons ?",o:["Hockey","Baseball","Golf","Tennis"],b:0},
+          {q:"Quel sport se joue avec une raquette et une balle jaune ?",o:["Badminton","Tennis","Squash","Ping-pong"],b:1},
+          {q:"Quel sport se joue avec un ballon et des buts, mais avec les mains ?",o:["Soccer","Handball","Rugby","Basketball"],b:1}
+],
+       facile: [
+    { q:"Quel sport utilise un ballon rond ?", o:["Soccer","Hockey","Tennis","Golf"], b:0 },
+    { q:"Quel sport se joue sur glace ?", o:["Karaté","Soccer","Basketball","Hockey"], b:3 },
+    { q:"Quel sport utilise une raquette ?", o:["Hockey","Soccer","Tennis","Golf"], b:2 },
+    { q:"Quel sport utilise un panier ?", o:["Soccer","Basketball","Golf","Tennis"], b:1 },
+    { q:"Quel sport utilise des bâtons ?", o:["Hockey","Soccer","Tennis","Natation"], b:0 },
+    { q:"Quel sport se joue avec un filet ?", o:["Course","Golf","Boxe","Volleyball"], b:3 },
+    { q:"Quel sport se joue dans une piscine ?", o:["Hockey","Natation","Soccer","Tennis"], b:1 },
+    { q:"Quel sport utilise une batte ?", o:["Baseball","Soccer","Tennis","Golf"], b:0 },
+    { q:"Quel sport utilise un ballon ovale ?", o:["Cricket","Rugby","Football","Tennis"], b:2 },
+    { q:"Quel sport se joue sur un ring ?", o:["Golf","Boxe","Natation","Tennis"], b:1 },
+    { q:"Quel sport utilise des skis ?", o:["Ski","Soccer","Basketball","Golf"], b:0 },
+    { q:"Quel sport utilise une planche ?", o:["Natation","Soccer","Tennis","Snowboard"], b:3 },
+    { q:"Quel sport se joue sur un terrain vert ?", o:["Natation","Hockey","Golf","Boxe"], b:2 },
+    { q:"Quel sport consiste à courir sur une piste ?", 
+      o:["Natation","Athlétisme","Hockey","Golf"], b:1 },
+    { q:"Quel sport utilise un filet et un ballon léger ?", 
+      o:["Golf","Boxe","Badminton","Course"], b:2 },
+    { q:"Quel sport se joue avec deux équipes et un ballon au pied ?", 
+      o:["Soccer","Tennis","Baseball","Hockey"], b:0 },
+    { q:"Quel sport utilise une corde pour sauter ?", 
+      o:["Saut à la corde","Boxe","Golf","Natation"], b:0 },
+    { q:"Quel sport se pratique sur un vélo ?", 
+      o:["Judo","Parachutisme","Plongée","Cyclisme"], b:3 },
+    { q:"Quel sport consiste à frapper une petite balle blanche sur un parcours ?", 
+      o:["Tennis","Golf","Soccer","Rugby"], b:1 },
+    { q:"Quel sport se joue avec un ballon orange et un panier ?", 
+      o:["Basketball","Football","Tennis","Baseball"], b:0 }
+],
+        moyen: [
+  {q:"Combien de périodes au hockey ?",o:["2","3","4","5"],b:1},
+  {q:"Combien de points vaut un panier au basketball ?",o:["1","2","3","4"],b:1},
+  {q:"Quel sport utilise un ballon de cuir ovale ?",o:["Soccer","Rugby","Basketball","Handball"],b:1},
+  {q:"Quel sport utilise une raquette et une balle jaune ?",o:["Squash","Badminton","Tennis","Ping-pong"],b:2},
+  {q:"Quel sport se joue sur gazon avec une crosse ?",o:["Hockey sur gazon","Baseball","Golf","Rugby"],b:0},
+  {q:"Quel sport se joue avec un ballon et un panier ?",o:["Basketball","Handball","Rugby","Soccer"],b:0},
+  {q:"Quel sport se joue avec un ballon et un filet bas ?",o:["Volleyball","Tennis","Badminton","Pickleball"],b:3},
+  {q:"Quel sport se joue avec une batte en bois ?",o:["Rugby","Golf","Tennis","Baseball"],b:3},
+  {q:"Quel sport se joue avec un ballon et des gants ?",o:["Baseball","Soccer","Rugby","Handball"],b:0},
+  {q:"Quel sport se joue avec un ballon et un panier suspendu ?",o:["Rugby","Handball","Basketball","Soccer"],b:2},
+  {q:"Quel sport se joue avec une balle blanche et une raquette ?",o:["Tennis","Squash","Badminton","Ping-pong"],b:1},
+  {q:"Quel sport se joue avec une balle orange et un panier ?",o:["Handball","Basketball","Rugby","Soccer"],b:1},
+  {q:"Quel sport se joue avec une balle et un club métallique ?",o:["Golf","Baseball","Tennis","Rugby"],b:0},
+  {q:"Quel sport se joue avec une balle et un filet haut ?",o:["Handball","Basketball","Rugby","Volleyball"],b:3},
+  {q:"Quel sport se joue avec une balle et une raquette légère ?",o:["Tennis","Badminton","Squash","Ping-pong"],b:1},
+  {q:"Quel sport se joue avec une balle et un bâton sur glace ?",o:["Hockey","Baseball","Golf","Tennis"],b:0},
+  {q:"Quel sport se joue avec une balle et un panier fixe ?",o:["Soccer","Handball","Rugby","Basketball"],b:3},
+  {q:"Quel sport se joue avec une balle et un filet central ?",o:["Rugby","Basketball","Tennis","Handball"],b:2},
+  {q:"Quel sport se joue avec une balle et un club sur gazon ?",o:["Golf","Baseball","Tennis","Rugby"],b:0},
+  {q:"Quel sport se joue avec une balle et un volant ?",o:["Tennis","Badminton","Squash","Ping-pong"],b:1}
+],
+        difficile: [
+  {q:"Combien de minutes dure un match de soccer professionnel ?",o:["60","90","120","45"],b:1},
+  {q:"Combien de joueurs par équipe au rugby à XV ?",o:["11","13","15","18"],b:2},
+  {q:"Quel sport utilise un disque volant ?",o:["Ultimate frisbee","Baseball","Golf","Rugby"],b:0},
+  {q:"Quel sport utilise une balle de cuir cousue à la main ?",o:["Rugby","Escalade","Tennis","Cricket"],b:3},
+  {q:"Quel sport utilise une balle pressurisée ?",o:["Ping-Pong","Squash","Tennis","Badminton"],b:2},
+  {q:"Quel sport utilise une balle en caoutchouc dur ?",o:["Tennis","Squash","Ping-pong","Badminton"],b:1},
+  {q:"Quel sport utilise une balle en mousse géante ?",o:["Kin-ball","Handball","Basketball","Rugby"],b:0},
+  {q:"Quel sport utilise une balle en plastique légère ?",o:["Ping-pong","Tennis","Squash","Badminton"],b:0},
+  {q:"Quel sport utilise une balle en liège recouverte de cuir ?",o:["Golf","Baseball","Cricket","Tennis"],b:2},
+  {q:"Quel sport utilise une balle en caoutchouc pressurisé ?",o:["Squash","Tennis","Ping-pong","Badminton"],b:1},
+  {q:"Quel sport se joue sur une patinoire avec un ballon au lieu d’une rondelle ?",o:["Hockey","Bandy","Ringette","Curling"],b:1},
+  {q:"Quel sport se joue avec un ballon ovale mais sans plaquages ?",o:["Handball","Rugby","Football américain","Touch rugby"],b:3},
+  {q:"Quel sport se joue avec une crosse et une balle en caoutchouc ?",o:["Quidditch","Lacrosse","Baseball","Golf"],b:1},
+  {q:"Quel sport se joue avec une raquette et un mur ?",o:["Squash","Tennis","Badminton","Pickleball"],b:0},
+  {q:"Quel sport se joue avec un ballon et des poteaux en H ?",o:["Handball","Football américain","Soccer","Rugby"],b:3},
+  {q:"Quel sport se joue avec un ballon et un filet très bas ?",o:["Pickleball","Tennis","Badminton","Volleyball"],b:0},
+  {q:"Quel sport se joue avec une balle très lourde lancée sur des quilles ?",o:["Quilles","Curling","Bowling","Pétanque"],b:2},
+  {q:"Quel sport se joue avec une pierre glissant sur la glace ?",o:["Hockey","Curling","Patinage","Bobsleigh"],b:1},
+  {q:"Quel sport se joue avec une balle frappée au pied mais sans buts ?",o:["Football australien","Soccer","Rugby","Handball"],b:0},
+  {q:"Quel sport se joue avec un ballon et un panier mais sans dribble ?",o:["Handball","Basketball","Netball","Kin-ball"],b:2}
+],
+      },
+     
+    math: {
+  revision: [
+    { q:"Combien font 150 + 75 ?", o:["215","220","225","230"], b:2 },
+    { q:"Combien font 320 − 145 ?", o:["155","165","175","185"], b:1 },
+    { q:"Combien font 18 × 4 ?", o:["64","68","72","76"], b:2 },
+    { q:"Combien font 96 ÷ 8 ?", o:["10","11","12","13"], b:2 },
+    { q:"Quelle est la valeur de 7² ?", o:["42","47","49","56"], b:2 },
+    { q:"Quelle est la valeur de √81 ?", o:["7","8","9","10"], b:2 },
+    { q:"Résous : x + 12 = 27", o:["13","14","15","16"], b:0 },
+    { q:"Résous : 4x = 48", o:["10","11","12","13"], b:2 },
+    { q:"Combien font 25% de 200 ?", o:["40","45","50","55"], b:2 },
+    { q:"Combien font 3/4 de 60 ?", o:["40","42","45","48"], b:0 },
+    { q:"Combien font 15 × 6 ?", o:["80","85","90","95"], b:2 },
+    { q:"Combien font 180 ÷ 12 ?", o:["12","13","14","15"], b:0 },
+    { q:"Résous : 5x − 10 = 20", o:["4","5","6","7"], b:2 },
+    { q:"Quelle est la valeur de 3³ ?", o:["18","24","27","30"], b:2 },
+    { q:"Combien font 2/5 de 100 ?", o:["30","35","40","50"], b:2 },
+    { q:"Combien font 14 × 3 ?", o:["38","40","42","44"], b:2 },
+    { q:"Résous : 2(x + 4) = 28", o:["8","9","10","12"], b:1 },
+    { q:"Combien font 90 − 28 ?", o:["52","58","60","62"], b:1 },
+    { q:"Quelle est la valeur de 10² ?", o:["80","90","100","110"], b:2 },
+    { q:"Combien font 55 + 19 ?", o:["64","70","72","74"], b:1 }
+],
+  facile: [
+    { q:"Combien font 120 + 30 ?", o:["140","150","160","170"], b:1 },
+    { q:"Combien font 75 + 25 ?", o:["90","95","100","105"], b:2 },
+    { q:"Combien font 140 − 60 ?", o:["70","75","80","85"], b:2 },
+    { q:"Combien font 200 − 85 ?", o:["105","110","115","120"], b:2 },
+    { q:"Combien font 12 × 3 ?", o:["30","33","36","39"], b:2 },
+    { q:"Combien font 9 × 5 ?", o:["40","45","50","55"], b:1 },
+    { q:"Combien font 56 ÷ 8 ?", o:["6","7","8","9"], b:1 },
+    { q:"Combien font 81 ÷ 9 ?", o:["7","8","9","10"], b:2 },
+    { q:"Quel nombre est le plus grand ?", o:["42","24","34","40"], b:0 },
+    { q:"Quel nombre est le plus petit ?", o:["18","12","15","20"], b:1 },
+    { q:"Combien font 33 + 18 ?", o:["49","50","51","52"], b:0 },
+    { q:"Combien font 90 − 32 ?", o:["56","58","60","62"], b:1 },
+    { q:"Combien font 11 × 2 ?", o:["20","21","22","23"], b:2 },
+    { q:"Combien font 16 × 2 ?", o:["30","32","34","36"], b:1 },
+    { q:"Combien font 100 ÷ 5 ?", o:["15","18","20","25"], b:2 },
+    { q:"Combien font 72 ÷ 6 ?", o:["10","11","12","13"], b:2 },
+    { q:"Combien font 55 + 14 ?", o:["67","68","69","70"], b:2 },
+    { q:"Combien font 140 − 45 ?", o:["85","90","95","100"], b:0 },
+    { q:"Combien font 28 + 36 ?", o:["60","62","64","66"], b:2 },
+    { q:"Combien font 18 + 27 ?", o:["43","44","45","46"], b:2 }
+],
+  moyen: [
+    { q:"Combien font 240 ÷ 6 ?", o:["30","35","40","45"], b:0 },
+    { q:"Combien font 18 × 7 ?", o:["116","124","126","132"], b:2 },
+    { q:"Quelle est la valeur de 3² + 4² ?", o:["16","18","25","32"], b:2 },
+    { q:"Combien font 15% de 200 ?", o:["20","25","30","35"], b:2 },
+    { q:"Quelle est la solution de x + 9 = 25 ?", o:["14","15","16","17"], b:0 },
+    { q:"Combien font 3/4 de 80 ?", o:["50","55","60","65"], b:2 },
+    { q:"Combien font 320 − 145 ?", o:["155","165","175","185"], b:1 },
+    { q:"Quelle est la valeur de 5 × (12 − 4) ?", o:["30","35","40","45"], b:2 },
+    { q:"Combien font 2.5 × 12 ?", o:["25","28","30","32"], b:2 },
+    { q:"Quelle fraction est équivalente à 0.5 ?", o:["1/3","1/2","2/3","3/4"], b:1 },
+    { q:"Quelle est la solution de 4x = 48 ?", o:["10","11","12","13"], b:2 },
+    { q:"Combien font 90 ÷ 1.5 ?", o:["50","55","60","65"], b:2 },
+    { q:"Quelle est la valeur de 7² ?", o:["42","47","49","56"], b:2 },
+    { q:"Combien font 125% de 80 ?", o:["90","95","100","110"], b:3 },
+    { q:"Quelle est la solution de 3x − 5 = 16 ?", o:["5","6","7","8"], b:2 },
+    { q:"Combien font 2/3 de  ninety ?", o:["50","55","60","65"], b:2 },
+    { q:"Quelle est la valeur de 8 × 6 − 10 ?", o:["36","38","40","42"], b:1 },
+    { q:"Combien font 450 ÷ 25 ?", o:["16","17","18","19"], b:2 },
+    { q:"Quelle est la solution de 12 + x = 37 ?", o:["23","24","25","26"], b:0 },
+    { q:"Combien font 4.2 × 5 ?", o:["18","19","20","21"], b:3 }
+],
+  difficile: [
+    { q:"Résous : 5x − 12 = 28", o:["6","7","8","9"], b:2 },
+    { q:"Combien font (3/4) × 32 ?", o:["20","22","24","26"], b:2 },
+    { q:"Quelle est la valeur de √121 ?", o:["9","10","11","12"], b:2 },
+    { q:"Résous : 2(x + 5) = 26", o:["6","7","8","9"], b:1 },
+    { q:"Combien font 15% de 480 ?", o:["62","68","72","80"], b:2 },
+    { q:"Quelle est la valeur de 3³ ?", o:["9","18","27","36"], b:2 },
+    { q:"Résous : 4x + 7 = 39", o:["6","7","8","9"], b:3 },
+    { q:"Combien font 2/5 de 150 ?", o:["50","55","60","65"], b:2 },
+    { q:"Quelle est la valeur de 8² − 6² ?", o:["20","24","28","32"], b:3 },
+    { q:"Résous : 9x = 117", o:["11","12","13","14"], b:2 },
+    { q:"Combien font (5/8) × 64 ?", o:["35","38","40","42"], b:2 },
+    { q:"Quelle est la valeur de √196 ?", o:["12","13","14","15"], b:2 },
+    { q:"Résous : 3x − 4 = 2x + 11", o:["11","12","13","15"], b:0 },
+    { q:"Combien font 30% de 250 ?", o:["65","70","75","80"], b:2 },
+    { q:"Quelle est la valeur de 4³ ?", o:["48","56","64","72"], b:2 },
+    { q:"Résous : 7(x − 2) = 35", o:["5","6","7","8"], b:1 },
+    { q:"Combien font 3/7 de 210 ?", o:["70","80","85","90"], b:0 },
+    { q:"Quelle est la valeur de 10² − 9² ?", o:["17","19","21","25"], b:2 },
+    { q:"Résous : 6x + 18 = 3x + 48", o:["8","9","10","12"], b:1 },
+    { q:"Combien font (2/3) ×  ninety ?", o:["50","55","60","65"], b:2 }
+],
+       },
+
+      cultureQC: {
+  revision: [
+    { q:"Quel groupe a chanté 'L'Amérique pleure' ?", o:["La Chicane","Harmonium","Simple Plan","Les Cowboys Fringants"], b:3 },
+    { q:"Quel plat québécois contient du fromage en grains ?", o:["Tourtière","Poutine","Pâté chinois","Soupe aux pois"], b:1 },
+    { q:"Quelle fête québécoise est célébrée le 24 juin ?", o:["La Saint-Jean-Baptiste","La Fête du Canada","L’Action de grâce","La Fête des Patriotes"], b:0 },
+    { q:"Que signifie l’expression 'être tanné' ?", o:["Être fatigué","Être content","Être surpris","Être excité"], b:0 },
+    { q:"Quel roman de Gabrielle Roy met en scène Florentine ?", o:["Le Survenant","Maria Chapdelaine","Bonheur d’occasion","Kamouraska"], b:2 },
+    { q:"Quel site québécois est reconnu par l’UNESCO ?", o:["Le Mont-Royal","Le Vieux-Québec","Percé","Le Vieux-Montréal"], b:1 },
+    { q:"Que veut dire 'c’est plate' ?", o:["C'est délicieux","C’est drôle","C’est dangereux","C’est ennuyant"], b:3 },
+    { q:"Quel conte québécois raconte un pacte avec le diable en canot ?", o:["La Chasse-galerie","Le Loup-Garou","La Corriveau","Le Serpent à plumes"], b:0 },
+    { q:"Quel dessert québécois est fait avec de la cassonade ?", o:["Tiramisu","Crème brûlée","Tarte au sucre","Gâteau forêt noire"], b:2 },
+    { q:"Quel anglicisme québécois signifie 'annuler' ?", o:["Flusher","Canceller","Skipper","Dropper"], b:1 },
+    { q:"Dans quelle série retrouve-t-on le personnage de Ti-Mé ?", o:["La Petite Vie","Les Bougon","Unité 9","District 31"], b:0 },
+    { q:"Quel bâtiment emblématique ressemble à un château à Québec ?", o:["Le Manoir Richelieu","Le Parlement","La Basilique Notre-Dame","Le Château Frontenac"], b:3 },
+    { q:"Que signifie l’expression 'pogner les nerfs' ?", o:["Être heureux","Se fâcher","Être malade","Être gêné"], b:1 },
+    { q:"Quel plat est souvent mangé à Noël au Québec ?", o:["Tacos","Pâté chinois","Tourtière","Sushi"], b:2 },
+    { q:"Quel conte met en scène un homme transformé en loup ?", o:["Le Loup-Garou","La Corriveau","La Dame Blanche","Le Diable au village"], b:0 },
+    { q:"Quel festival célèbre la musique francophone ?", o:["Francos de Montréal","Osheaga","Jazz Fest","Igloofest"], b:0 },
+    { q:"Que signifie l’expression 'se tirer une bûche' ?", o:["Partir","S’asseoir","Se cacher","Se fâcher"], b:1 },
+    { q:"Quel village gaspésien est célèbre pour son rocher ?", o:["Matane","Gaspé","Carleton","Percé"], b:3 },
+    { q:"Quel chanteur a interprété 'Je reviendrai à Montréal' ?", o:["Paul Piché","Robert Charlebois","Gilles Vigneault","Michel Rivard"], b:3 },
+    { q:"Quel est l’objectif principal de la Loi 101 ?", o:["Protéger le français","Interdire l’anglais","Promouvoir le bilinguisme","Favoriser l’immigration"], b:0 }
+],
+    facile: [
+    { q:"Quel groupe a chanté 'L'Amérique pleure' ?", o:["Harmonium","Les Cowboys Fringants","Simple Plan","La Chicane"], b:1 },
+    { q:"Quel plat québécois contient du fromage en grains ?", o:["Pâté chinois","Tourtière","Poutine","Soupe aux pois"], b:2 },
+    { q:"Quel sport est le plus populaire au Québec ?", o:["Soccer","Hockey","Baseball","Basketball"], b:1 },
+    { q:"Quelle chanteuse québécoise est connue mondialement ?", o:["Coeur de Pirate","Lara Fabian","Roch Voisine","Céline Dion"], b:3 },
+    { q:"Que signifie l’expression 'être tanné' ?", o:["Être fatigué","Être content","Être surpris","Être excité"], b:0 },
+    { q:"Quel dessert québécois est fait avec de la cassonade ?", o:["Crème brûlée","Gâteau forêt noire","Tarte au sucre","Tiramisu"], b:2 },
+    { q:"Quel animal représente le Canadien de Montréal ?", o:["Un ours","Un lion","Un CH","Un aigle"], b:2 },
+    { q:"Que veut dire 'c’est plate' ?", o:["C’est drôle","C’est ennuyant","C’est dangereux","C’est délicieux"], b:1 },
+    { q:"Quel groupe a chanté 'Les étoiles filantes' ?", o:["Les Cowboys Fringants","Kaïn","Harmonium","Les Trois Accords"], b:0 },
+    { q:"Quel ingrédient n’est PAS dans le pâté chinois ?", o:["Maïs","Bœuf haché","Purée de pommes de terre","Fromage"], b:3 },
+    { q:"Quel anglicisme québécois signifie 'annuler' ?", o:["Skipper","Flusher","Canceller","Dropper"], b:2 },
+    { q:"Que signifie 'pogner les nerfs' ?", o:["Être malade","Être heureux","Se fâcher","Être gêné"], b:2 },
+    { q:"Quel festival célèbre la musique francophone ?", o:["Osheaga","Francos de Montréal","Jazz Fest","Igloofest"], b:1 },
+    { q:"Quel plat est souvent mangé à Noël ?", o:["Sushi","Pizza","Tacos","Tourtière"], b:3 },
+    { q:"Que veut dire 'c’est le fun' ?", o:["C’est amusant","C’est triste","C’est dangereux","C’est compliqué"], b:0 },
+    { q:"Quel chanteur a interprété 'Ordinaire' ?", o:["Robert Charlebois","Jean Leloup","Éric Lapointe","Daniel Bélanger"], b:0 },
+    { q:"Quel sport joue le Canadien de Montréal ?", o:["Baseball","Hockey","Soccer","Football"], b:1 },
+    { q:"Que signifie 'être dans le jus' ?", o:["Être occupé","Être malade","Être riche","Être perdu"], b:0 },
+    { q:"Quel dessert québécois est fait avec du sirop d’érable ?", o:["Crème glacée","Brownie","Tire d’érable","Baklava"], b:2 },
+    { q:"Quel chanteur a interprété 'Je reviendrai à Montréal' ?", o:["Robert Charlebois","Michel Rivard","Gilles Vigneault","Paul Piché"], b:1 }
+],
+  moyen: [
+    { q:"Que signifie l’expression 'être sur son trente-six' ?", o:["Être très bien habillé","Être fâché","Être stressé","Être malade"], b:0 },
+    { q:"Dans quel roman retrouve-t-on le personnage de Florentine ?", o:["Maria Chapdelaine","Bonheur d’occasion","Kamouraska","Le Survenant"], b:1 },
+    { q:"Quelle fête québécoise est célébrée le 24 juin ?", o:["La Fête du Canada","La Saint-Jean-Baptiste","L’Action de grâce","La Fête des Patriotes"], b:1 },
+    { q:"Que signifie l’expression 'pogner la chienne' ?", o:["Être jaloux","Être fâché","Avoir peur","Être malade"], b:2 },
+    { q:"Quel auteur a écrit *Les Belles-Sœurs* ?", o:["Louis Hémon","Gabrielle Roy","Anne Hébert","Michel Tremblay"], b:3 },
+    { q:"Quel lieu patrimonial de Montréal est célèbre pour son architecture gothique ?", o:["La Basilique Notre-Dame","L’Oratoire Saint-Joseph","Le Stade Olympique","Le Musée Pointe-à-Callière"], b:0 },
+     { q:"Quel joueur de hockey est surnommé 'Le Rocket' ?", o:["Guy Lafleur","Maurice Richard","Patrick Roy","Mario Lemieux"], b:1 },
+    { q:"Que signifie l’expression 'être dans le champ' ?", o:["Se tromper","Être chanceux","Être malade","Être en retard"], b:0 },
+    { q:"Quel roman de Louis Hémon est un classique québécois ?", o:["Bonheur d'occasion","Kamouraska","Maria Chapdelaine","Le Matou"], b:2 },
+    { q:"Quelle fête est associée aux feux de joie au Québec ?", o:["Halloween","Noël","Pâques","La Saint-Jean-Baptiste"], b:3 },
+    { q:"Dans quel film québécois retrouve-t-on le personnage de Zach ?", o:["C.R.A.Z.Y.","Mommy","Incendies","La Guerre des tuques"], b:0 },
+    { q:"Que signifie l’expression 'se tirer une bûche' ?", o:["Se cacher","Partir","S’asseoir","Se fâcher"], b:2 },
+    { q:"Quel site historique de Montréal est associé à la fondation de la ville ?", o:["Le Mont-Royal","Pointe-à-Callière","Le Vieux-Port","Hochelaga"],b:1 },
+    { q:"Quelle série policière québécoise se déroule au poste 31 ?", o:["La Faille","Unité 9","Fugueuse","District 31"], b:3 },
+    { q:"Que signifie l’expression 'avoir la patate' ?", o:["Être ému","Être malade","Être fâché","Être jaloux"], b:0 },
+    { q:"Quel anglicisme québécois populaire signifie 'être impressionné ou surpris' ?", o:["Être flushé","Être ghosté","Être cancellé","Être flabbergasté"], b:3 },
+    { q:"Quelle fête québécoise marque souvent le début du printemps ?", o:["La Fête du Canada","La cabane à sucre","La Saint-Valentin","La Fête des Rois"], b:1 },
+    { q:"Dans quelle série retrouve-t-on le personnage de Ti-Mé ?", o:["Les Invincibles","Les Bougon","La Petite Vie","Unité 9"], b:2 },
+    { q:"Que signifie l’expression 'se faire passer un sapin' ?", o:["Être malade","Être complimenté","Se faire avoir","Être chanceux"], b:2 },
+    { q:"Quel roman québécois raconte l’histoire d’un étranger mystérieux dans un village ?", o:["Le Survenant","Kamouraska","Maria Chapdelaine","Le Matou"], b:0 }
+],
+    difficile: [
+    { q:"Quel est l’objectif principal de la Loi 101 adoptée en 1977 ?", o:["Protéger le français","Interdire l’anglais","Promouvoir le bilinguisme","Favoriser l’immigration"], b:0 },
+    { q:"Dans quelle région dit-on souvent 'char' plutôt que 'auto' ?", o:["Seulement en Gaspésie","Seulement à Montréal","Partout au Québec","Seulement à Québec"], b:2 },
+    { q:"Quel conte traditionnel met en scène un chasseur poursuivi par un cheval sans tête ?", o:["La Corriveau","Le Bonhomme Sept-Heures","Le Loup-Garou","La Chasse-galerie"], b:3 },
+    { q:"Quel est l’effet principal de l’influence anglaise sur le français québécois ?", o:["L’usage d’anglicismes","La disparition du tutoiement","La perte des accents","La création de nouveaux temps verbaux"], b:0 },
+    { q:"Quel personnage du folklore québécois enlève les enfants qui ne dorment pas ?", o:["La Corriveau","Le Bonhomme Sept-Heures","Le Diable","Le Lutin"], b:1 },
+    { q:"Quelle loi québécoise encadre la laïcité de l’État ?", o:["Loi 101","Loi 21","Loi 96","Loi 10"], b:1 },
+    { q:"Quelle expression ancienne signifie 'être très fatigué' ?", o:["Avoir la patate","Être dans le champ","Être brûlé raide","Avoir la chienne"], b:2 },
+    { q:"Dans quelle ville utilise-t-on davantage des anglicismes comme 'checker' ou 'canceller' ?", o:["Rimouski","Québec","Saguenay","Montréal"], b:3 },
+    { q:"Quel conte met en scène un pacte avec le diable pour voyager en canot ?", o:["Le Serpent à plumes","Le Loup-Garou","La Corriveau","La Chasse-galerie"], b:3 },
+    { q:"Quel est l’un des objectifs de la Loi 96 adoptée en 2022 ?", o:["Renforcer la protection du français","Abolir la Loi 101","Rendre l’anglais obligatoire","Supprimer les cégeps francophones"], b:0 },
+    { q:"Quelle expression régionale signifie 'être de mauvaise humeur' ?", o:["Être bête comme ses pieds","Être sur la brosse","Être sur la trotte","Être sur le piton"], b:0 },
+    { q:"Quel personnage légendaire québécois est associé à une femme accusée de sorcellerie ?", o:["La Sorcière de l'île","La Dame Blanche","La Corriveau","La Veuve Noire"], b:2 },
+    { q:"Quel phénomène linguistique est plus fréquent à Montréal qu’en région ?", o:["Le joual","Le code-switching","Le tutoiement","Le français international"], b:1 },
+    { q:"Quel conte québécois raconte l’histoire d’un homme transformé en loup ?", o:["Le Loup-Garou","La Chasse-galerie","Le Serpent à plumes","Le Diable au village"], b:0 },
+    { q:"Quel anglicisme est particulièrement répandu dans les milieux urbains ?", o:["Bibitte","Bécosse","Parking","Chandail"], b:2 },
+    { q:"Dans quelle série retrouve-t-on le personnage de Donalda ?", o:["District 31","La Petite Vie","Unité 9","Les Pays d’en haut"], b:3 },
+    { q:"Quelle expression ancienne signifie 'partir rapidement' ?", o:["Décarrer","Flusher","Skipper","Dropper"], b:0 },
+    { q:"Quelle région du Québec conserve le plus de mots anciens comme 'breuvage' ou 'magané' ?", o:["Québec","Montréal","Les régions rurales","Laval"], b:2 },
+    { q:"Quel élément du patrimoine québécois est lié aux veillées d’antan ?", o:["Les contes et légendes","Les festivals modernes","Les séries télé","Les discours politiques"], b:0 },
+    { q:"Quel est un enjeu actuel lié à l’influence de l’anglais au Québec ?", o:["La disparition du joual","La diminution de l’usage du français à Montréal","La fin des anglicismes","L’interdiction de l’anglais"], b:1 }
+],
+       },
+       
+    pop: {
+  revision: [
+    { q:"Quel artiste chante 'Blinding Lights' ?", 
+      o:["Justin Bieber","The Weeknd","Shawn Mendes","Drake"], b:1 },
+    { q:"Quel film contient la phrase 'May the odds be ever in your favor' ?", 
+      o:["Hunger Games","Maze Runner","Divergent","Harry Potter"], b:0 },
+    { q:"Quel personnage est la mascotte de Nintendo ?", 
+      o:["Kirby","Sonic","Pikachu","Mario"], b:3 },
+    { q:"Quel film met en vedette Iron Man ?", 
+      o:["Avatar","Avengers","Batman","Star Wars"], b:1 },
+    { q:"Quel auteur a écrit *Harry Potter* ?", 
+      o:["C.S. Lewis","Tolkien","J.K. Rowling","Rick Riordan"], b:2 },
+    { q:"Quel réseau social disparu permettait des vidéos de 6 secondes ?", 
+      o:["Vine","MySpace","Periscope","Google+"], b:0 },
+    { q:"Quel film contient la réplique 'I am your father' ?", 
+      o:["Matrix","Star Wars V","Alien","Blade Runner"], b:1 },
+    { q:"Quel jeu vidéo met en scène le personnage Link ?", 
+      o:["Final Fantasy","Zelda","Skyrim","Elden Ring"], b:1 },
+    { q:"Quel groupe a interprété 'Bohemian Rhapsody' ?", 
+      o:["Nirvana","Coldplay","The Beatles","Queen"], b:3 },
+    { q:"Quel personnage mythologique est le dieu du tonnerre ?", 
+      o:["Thor","Odin","Zeus","Hadès"], b:2 },
+    { q:"Quel film d’animation met en scène Olaf ?", 
+      o:["La Reine des neiges","Zootopia","Moana","Encanto"], b:0 },
+    { q:"Quel studio a produit la saga Star Wars ?", 
+      o:["Universal","Lucasfilm","Paramount","Warner Bros"], b:1 },
+    { q:"Quel film culte de 1999 explore la réalité simulée ?", 
+      o:["Dark City","The Truman Show","Fight Club","Matrix"], b:3 },
+    { q:"Quel jeu vidéo a popularisé la danse 'Floss' ?", 
+      o:["Minecraft","Roblox","Fortnite","Overwatch"], b:2 },
+    { q:"Quel artiste a popularisé 'Take On Me' ?", 
+      o:["a-ha","Wham!","Duran Duran","Toto"], b:0 },
+    { q:"Quel film met en scène un panda expert en kung-fu ?", 
+      o:["Kung Fu Panda","Shrek","Mulan","Madagascar"], b:0 },
+    { q:"Quel ancien réseau social permettait de personnaliser son profil en HTML ?", 
+      o:["Friendster","Tumblr","Vine","MySpace"], b:3 },
+    { q:"En quelle année est sorti le film expressionniste 'Nosferatu' ?", 
+      o:["1914","1935","1922","1941"], b:2 },
+    { q:"Quel acteur incarne Deadpool ?", 
+      o:["Ryan Reynolds","Tom Holland","Chris Evans","Tom Hardy"], b:0 },
+    { q:"Quel jeu vidéo populaire consiste à construire avec des blocs ?", 
+      o:["Roblox","Zelda","Fortnite","Minecraft"], b:3 }
+],
+  facile: [
+    { q:"Quel artiste chante 'Blinding Lights' ?", o:["The Weeknd","Drake","Justin Bieber","Shawn Mendes"], b:0 },
+    { q:"Quel groupe a interprété 'Bohemian Rhapsody' ?", o:["Nirvana","The Beatles","Coldplay","Queen"], b:3 },
+    { q:"Quel film met en vedette le personnage Iron Man ?", o:["Batman","Avengers","Star Wars","Avatar"], b:1 },
+    { q:"Quel acteur joue Jack dans Titanic ?", o:["Tom Cruise","Brad Pitt","Leonardo DiCaprio","Keanu Reeves"], b:2 },
+    { q:"Quel personnage est la mascotte de Nintendo ?", o:["Mario","Sonic","Pikachu","Kirby"], b:0 },
+    { q:"Quelle console est fabriquée par Sony ?", o:["Switch","Xbox","PlayStation","GameCube"], b:2 },
+    { q:"Quel manga met en scène un pirate au chapeau de paille ?", 
+      o:["One Piece","Naruto","Bleach","Fairy Tail"], b:0 },
+    { q:"Quel auteur a écrit *Harry Potter* ?", o:["Tolkien","Rick Riordan","C.S. Lewis","J.K. Rowling"], b:3 },
+    { q:"Quel conte met en scène une princesse et sept nains ?", o:["Cendrillon","Blanche-Neige","Ariel","Raiponce"], b:1 },
+    { q:"Quel chanteur canadien a interprété 'Peaches' ?", o:["Shawn Mendes","The Weeknd","Justin Bieber","Drake"], b:2 },
+    { q:"Dans quelle série trouve-t-on Eleven ?", o:["Stranger Things","Wednesday","The 100","Riverdale"], b:0 },
+    { q:"Quel film met en scène un panda expert en kung-fu ?", o:["Madagascar","Kung Fu Panda","Shrek","Mulan"], b:3 },
+    { q:"Quel super-héros est aussi appelé 'l’homme-araignée' ?", o:["Batman","Spider-Man","Superman","Flash"], b:1 },
+    { q:"Quel Pokémon jaune est le plus connu ?", o:["Jigglypuff","Eevee","Charmander","Pikachu"], b:3 },
+    { q:"Quel groupe a chanté 'Viva La Vida' ?", o:["Imagine Dragons","Coldplay","U2","Maroon 5"], b:1 },
+    { q:"Quel film d’animation met en scène Olaf le bonhomme de neige ?", o:["La Reine des neiges","Encanto","Moana","Zootopia"], b:0 },
+    { q:"Quel personnage de BD vit dans le village des Schtroumpfs ?", o:["Tintin","Astérix","Grand Schtroumpf","Garfield"], b:2 },
+    { q:"Quel jeu vidéo populaire consiste à construire avec des blocs ?", o:["Minecraft","Fortnite","Roblox","Zelda"], b:0 },
+    { q:"Quel acteur incarne Deadpool ?", o:["Tom Holland","Chris Evans","Tom Hardy","Ryan Reynolds"], b:3 },
+    { q:"Quel terme TikTok signifie 'trop dramatique' ?", 
+      o:["Extra","Based","Slay","NPC"], b:0 },
+],
+  moyen: [
+    { q:"Quel film contient la phrase 'May the odds be ever in your favor' ?", 
+      o:["Divergent","Hunger Games","Harry Potter","Maze Runner"], b:1 },
+    { q:"Quel instrument possède des cordes et un archet ?",
+      o:["Trompette","Piano","Violon","Flûte"], b:2 },
+    { q:"Quel film a popularisé la réplique 'Why so serious?' ?", 
+      o:["The Dark Knight","Joker","Inception","Fight Club"], b:0 },
+    { q:"Quel studio a produit la saga 'Star Wars' ?",
+      o:["Warner Bros","Lucasfilm","Universal","Paramount"], b:1 },
+    { q:"Quel personnage prononce 'Wingardium Leviosa' ?",
+      o:["Harry","Dumbledore","Ron","Hermione"], b:3 },
+    { q:"Quel style musical est associé au DJ Avicii ?",
+      o:["EDM","Rock","Classique","Rap"], b:0 },
+    { q:"Quel instrument est essentiel dans le jazz ?",
+      o:["Clarinette","Banjo","Saxophone","Harmonica"], b:2 },
+    { q:"Quel acteur joue Indiana Jones ?",
+      o:["Tom Hanks","Chris Pratt","Harrison Ford","Bruce Willis"], b:2 },
+    { q:"Quel jeu vidéo met en scène le personnage Link ?",
+      o:["Skyrim","Elden ring","Final Fantasy","Zelda"], b:3 },
+    { q:"En quelle année Youtube a-t-il été lancé ?",
+      o:["2001","2010","2005","2007"], b:2 },
+    { q:"Quel jeu vidéo a popularisé la danse 'Floss' ?", 
+      o:["Fortnite","Minecraft","Roblox","Overwatch"], b:0 },
+    { q:"Quel personnage mythologique est le dieu du tonnerre ?",
+      o:["Zeus","Thor","Odin","Hadès"], b:0 },
+    { q:"Quel studio d’animation a créé 'Toy Story' ?",
+      o:["DreamWorks","Pixar","Sony Animation","Illumination"], b:1 },
+    { q:"Quel groupe est associé au style new wave des années 80 ?",
+      o:["Nirvana","Depeche Mode","Coldplay","Metallica"], b:1 },
+    { q:"Quel personnage de BD mange des épinards pour devenir fort ?",
+      o:["Popeye","Tintin","Astérix","Garfield"], b:0 },
+    { q:"Quel jeu vidéo populaire met en scène un battle royale ?",
+      o:["Halo","Minecraft","Fortnite","Overwatch"], b:2 },
+    { q:"Quel film contient la réplique 'Hasta la vista, baby' ?",
+      o:["Die Hard","Rocky","Rambo","Terminator 2"], b:3 },
+    { q:"Quel instrument est typique de la musique traditionnelle irlandaise ?",
+      o:["Guitare électrique","Cornemuse","Tuba","Piano"], b:1 },
+    { q:"Quel créateur est connu pour ses chaussures à semelles rouges ?", 
+      o:["Louboutin","Balenciaga","Prada","Fendi"], b:0 },
+    { q:"Quel film des années 80 met en scène des chasseurs de fantômes ?",
+      o:["Gremlins","The Goonies","Beetlejuice","Ghostbusters"], b:3 }
+],
+  difficile: [
+    { q:"En quelle année est sorti le film expressionniste 'Nosferatu' ?",
+      o:["1922","1935","1914","1941"], b:0 },
+    { q:"Quel dieu grec est associé aux rêves et au sommeil ?",
+      o:["Éros","Héraclès","Morphée","Hermès"], b:2 },
+    { q:"Quel réseau social disparu permettait de poster des vidéos de 6 secondes ?",
+      o:["MySpace","Vine","Periscope","Google+"], b:1 },
+    { q:"Quel auteur est connu pour 'American Gods' ?",
+      o:["Stephan King","George R.R. Martin","Neil Gaiman","Philip K. Dick"], b:2 },
+    { q:"Quel emoji était à l’origine un simple symbole ASCII ?",
+      o:[";-)","😂","🔥","❤️"], b:0 },
+    { q:"Quel film culte contient la phrase 'I am your father' ?",
+      o:["Matrix","Star Wars V","Alien","Blade Runner"], b:1 },
+    { q:"Quel jeu vidéo de 1998 a révolutionné la furtivité ?",
+      o:["Thief","Half-Life","Resident Evil 2","Metal Gear Solid"], b:3 },
+    { q:"Quel créateur de mode est connu pour ses designs surréalistes ?",
+      o:["Calvin Klein","Ralph Lauren","Tom Ford","Alexander McQueen"], b:3 },
+    { q:"Quel mythe nordique raconte la fin du monde ?",
+      o:["Valhalla","Ragnarök","Midgard","Yggdrasil"], b:1 },
+    { q:"Quel événement sportif a généré l’un des memes les plus viraux : 'The Michael Jordan crying face' ?",
+    o:["Discours d’intronisation au Hall of Fame","Défaite en finale NBA 1998","Annonce de retraite 2003","Documentaire 'The Last Dance'"], 
+    b:0 },
+    { q:"Quel ancien réseau social permettait de personnaliser son profil avec du HTML ?",
+      o:["Friendster","Tumblr","MySpace","Vine"], b:2 },
+    { q:"Quel artiste a popularisé la chanson 'Take On Me' avec un clip rotoscopé ?",
+      o:["Duran Duran","a-ha","Wham!","Toto"], b:1 },
+    { q:"Quel film contient la réplique 'Life finds a way' ?",
+      o:["Jurassic Park","Interstellar","The Thing","Arrival"], b:0 },
+    { q:"Lors de quelle année Usain Bolt a-t-il établi son record mondial du 100m (9.58s) ?",
+    o:["2005","2012","2009","2016"], b:2 },
+    { q:"Quel jeu vidéo nostalgique utilisait une cartouche jaune au lieu d’une grise ?",
+      o:["Zelda II","Pokémon Rouge","Donkey Kong 64","Metroid"], b:2 },
+    { q:"Quel studio est derrière le film 'Akira' (1988) ?",
+      o:["Tokyo Movie Shinsha","Studio Ghibli","Toei Animation","Madhouse"], b:0 },
+    { q:"Quel événement sportif mondial a été interrompu par la pandémie en 2020, une première dans l’histoire moderne ?",
+    o:["Super Bowl","Coupe du Monde de soccer","Jeux Olympiques de Tokyo","Tour de France"], b:2 },
+    { q:"Quel emoji a été le plus utilisé dans le monde en 2021 ?",
+      o:["😂","❤️","👍","😭"], b:0 },
+    { q:"Quel film culte de 1999 explore la réalité simulée ?",
+      o:["Dark City","Fight Club","The Truman Show","Matrix"], b:3 },
+    { q:"Quel site nostalgique permettait de créer un avatar animé appelé 'Meez' ?",
+      o:["Habbo","Meez.com","Club Penguin","Gaia Online"], b:1 }
+],
+    },
+    
+    vie: {
+  revision: [
+    { q:"Quel objet est utilisé pour écrire ?",
+      o:["Stylo","Cuillère","Clé","Brosse"], b:0 },
+    { q:"Quel animal apporte traditionnellement la malchance ?",
+      o:["Chat noir","Cheval","Raie manta","Panthère noire"], b:0 },
+    { q:"Quel pays est le plus grand producteur de café au monde ?",
+      o:["Colombie","Vietnam","Brésil","Éthiopie"], b:2 },
+    { q:"Quel objet de maison est utilisé pour enlever la poussière ?",
+      o:["Raclette","Serpillière","Plumeau","Éponge"], b:2 },
+    { q:"Quel phénomène psychologique consiste à voir des visages dans des objets ?",
+      o:["Synesthésie","Paréidolie","Déjà-vu","Effet Mandela"], b:1 },
+    { q:"Quel aliment est un féculent ?",
+      o:["Poulet","Laitue","Poisson","Pomme de terre"], b:3 },
+    { q:"Quel gaz inodore et mortel peut s’accumuler dans une maison mal ventilée ?",
+      o:["Méthane","Monoxyde de carbone","Ozone","Dioxyde de soufre"], b:1 },
+    { q:"Quel fruit est traditionnellement utilisé pour faire du guacamole ?",
+      o:["Avocat","Mangue","Poivron","Courgette"], b:0 },
+    { q:"Quel objet porte chance ?",
+      o:["Clé","Trèfle à quatre feuilles","Fourchette","Collier"], b:1 },
+    { q:"Quel outil sert à aérer la terre dans un jardin ?",
+     o:["Sécateur","Râteau","Pelle","Fourche"], b:3 },
+    { q:"Quel matériau isolant est utilisé dans les fenêtres à double vitrage ?",
+      o:["Ozone","Hélium","Argon","Hydrogène"], b:2 },
+    { q:"Quel slogan appartient à Nike ?",
+      o:["Think Different","Just Do It","Open Happiness","I'm Lovin' It"], b:1 },
+    { q:"Quel phénomène explique pourquoi les vêtements noirs chauffent plus au soleil ?",
+      o:["Absorption des longueurs d’onde","Réflexion diffuse","Polarisation thermique","Effet photochromique"], b:0 },
+    { q:"Quel aliment est fait de pâte fermentée ?",
+      o:["Poulet","Pain","Riz","Fromage"], b:1 },
+  { q:"Quel pays est célèbre pour sa production d’huile d’olive ?",
+      o:["Grèce","Inde","Canada","Norvège"], b:0 },
+    { q:"Quel type de fichier est le plus susceptible de contenir un virus ?",
+      o:[".exe",".txt",".png",".mp3"], b:0 },
+    { q:"Quel appareil domestique consomme le plus d’énergie en continu ?",
+      o:["Micro-ondes","Télévision","Réfrigérateur","Lave-vaisselle"], b:2 },
+    { q:"Quel fruit est botaniquement une baie ?",
+      o:["Aubergine","Tomate","Courgette","Poivron"], b:1 },
+    { q:"Quel objet de bureau sert à agrafer des feuilles ?",
+      o:["Pince","Perforatrice","Classeur","Agrafeuse"], b:3 },
+    { q:"Quel document est essentiel pour contester une facture erronée ?",
+      o:["Une preuve écrite","Une plainte verbale","Un appel téléphonique","Une photo du produit"], b:0 }
+],
+  facile: [
+    { q:"Quel fromage est connu pour ses trous ?", o:["Gruyère","Cheddar","Brie","Mozzarella"], b:0 },
+    { q:"Quel plat italien est fait de pâtes ?", o:["Sushi","Spaghetti","Tacos","Poutine"], b:1 },
+    { q:"Quel slogan appartient à Nike ?", o:["Open Happiness","I’m Lovin’ It","Think Different","Just Do It"], b:3 },
+    { q:"La trypophobie est la peur de…", o:["Hauteurs","Trous","Araignées","Eau"], b:1 },
+    { q:"Casser un miroir apporte…", o:["Rien","Bonne chance","7 ans de malchance","Un vœu"], b:2 },
+    { q:"Quel fruit est jaune et courbé ?", o:["Ananas","Citron","Orange","Banane"], b:3 },
+    { q:"Quel mot rare signifie 'qui ne rit jamais' ?", o:["Agélaste","Émerillonné","Sagace","Volubile"], b:0 },
+    { q:"Quel aliment est fait de pâte fermentée ?", o:["Riz","Poulet","Pain","Fromage"], b:2 },
+    { q:"Quel animal apporte la malchance ?", o:["Panthère noire","Raie manta","Cheval","Chat noir"], b:3 },
+    { q:"Quel slogan appartient à McDonald's ?", o:["I’m Lovin’ It","Just Do It","Taste the Feeling","Have It Your Way"],b:0 },
+    { q:"L’acrophobie est la peur de…", o:["Sang","Eau","Serpents","Hauteurs"], b:3 },
+    { q:"Quel plat est fait de riz et de poisson cru ?", o:["Sushi","Pizza","Hamburger","Tacos"], b:0 },
+    { q:"Quel objet porte chance ?", o:["Collier","Trèfle à quatre feuilles","Clé","Fourchette"], b:1 },
+    { q:"Quel mot rare signifie 'plein d’énergie' ?", o:["Taciturne","Agélaste","Émerillonné","Lugubre"], b:2 },
+    { q:"Quel aliment est fait de lait ?", o:["Fromage","Poulet","Riz","Pain"], b:0 },
+    { q:"Quel geste porte malheur ?", o:["Éternuer","Sourire","Passer sous une échelle","Secouer la tête"], b:2 },
+    { q:"Quel aliment est un féculent ?", o:["Pomme de terre","Poulet","Poisson","Laitue"], b:0 },
+    { q:"Quel objet est utilisé pour écrire ?", o:["Cuillère","Stylo","Brosse","Clé"], b:1 },
+    { q:"Quel animal miaule ?", o:["Chat","Chien","Cheval","Vache"], b:0 },
+    { q:"Quel fruit est rouge ?", o:["Citron","Banane","Raisin","Fraise"], b:3 }
+],
+  moyen: [
+    { q:"Quel animal apparaît sur le logo de Porsche ?",
+      o:["Cheval","Lion","Taureau","Aigle"], b:0 },
+    { q:"Quel pays est le plus grand producteur de café au monde ?",
+      o:["Colombie","Vietnam","Brésil","Éthiopie"], b:2 },
+    { q:"Quelle plante aromatique est l’ingrédient principal des infusions digestives après le repas ?",
+      o:["Thym","Romarin","Basilic","Menthe"], b:3 },
+    { q:"Combien de cartes contient un jeu standard (sans jokers) ?",
+      o:["48","52","54","50"], b:1 },
+    { q:"Quel slogan est associé à Nike ?",
+      o:["Just Do It","Think Different","Because You're Worth It","I'm Lovin' It"], b:0 },
+    { q:"Quel objet de cuisine sert à mesurer la température interne d’un aliment ?",
+      o:["Fouet","Spatule","Thermomètre culinaire","Écumoire"], b:2 },
+    { q:"Quel fruit est traditionnellement utilisé pour faire du guacamole ?",
+      o:["Avocat","Mangue","Poivron","Courgette"], b:0 },
+    { q:"Quel appareil domestique consomme le plus d’énergie en continu ?",
+      o:["Télévision","Micro-ondes","Lave-vaisselle","Réfrigérateur"], b:3 },
+    { q:"Quel mot désigne la peur de manquer quelque chose sur les réseaux sociaux ?",
+      o:["FOMO","YOLO","ASMR","IRL"], b:0 },
+    { q:"Quel ingrédient est essentiel pour faire une pâte à crêpes ?",
+      o:["Riz","Farine","Pois chiches","Semoule"], b:1 },
+    { q:"Quel pays est le plus grand consommateur de fromage par habitant ?",
+      o:["France","Danemark","Suisse","Italie"], b:1 },
+    { q:"Quel outil est utilisé pour aérer la terre dans un jardin ?",
+      o:["Sécateur","Râteau","Pelle","Fourche"], b:3 },
+    { q:"Quel appareil permet de purifier l’air dans une maison ?",
+      o:["Humidificateur","Purificateur","Déshumidificateur","Ventilateur"], b:1 },
+    { q:"Quel aliment est la base du houmous ?",
+      o:["Pois chiches","Lentilles","Haricots noirs","Avoine"], b:0 },
+    { q:"Quel loisir consiste à assembler de petites briques colorées ?",
+      o:["Puzzle","Lego","Origami","Modélisme"], b:1 },
+    { q:"Quel objet de maison est utilisé pour enlever la poussière sur les meubles ?",
+      o:["Raclette","Serpillière","Plumeau","Éponge"], b:2 },
+    { q:"Quel pays est célèbre pour sa production d’huile d’olive ?",
+      o:["Grèce","Canada","Inde","Norvège"], b:0 },
+    { q:"Quel ingrédient donne sa couleur jaune au curry ?",
+      o:["Curcuma","Safran","Paprika","Cumin"], b:0 },
+    { q:"Quel type de lumière est recommandé pour la lecture ?",
+      o:["Lumière rouge","Lumière bleue","Lumière chaude","Lumière stroboscopique"], b:2 },
+    { q:"Quel objet de bureau permet d’agrafer des feuilles ensemble ?",
+      o:["Perforatrice","Agrafeuse","Classeur","Pince"], b:1 }
+],
+  difficile: [
+    { q:"Quelle protéine présente dans la farine de blé donne à la pâte à pain son élasticité et sa capacité à emprisonner les gaz ?",
+      o:["Kératine","Albumine","Caséine","Gluten"], b:3 },
+    { q:"Quel fruit est botaniquement classé comme une baie, malgré son usage culinaire salé ?",
+      o:["Poivron","Tomate","Aubergine","Courgette"], b:1 },
+    { q:"Quel phénomène psychologique décrit la tendance à percevoir des visages dans des objets du quotidien ?",
+    o:["Synesthésie","Déjà-vu","Paréidolie","Effet Mandela"], b:2 },
+    { q:"Quel organisme doit être contacté en premier en cas de fraude sur une carte de crédit ?",
+    o:["Votre institution financière","La police","Revenu Québec","Le bureau de crédit"], b:0 },
+    { q:"Quel champignon rare est surnommé 'diamant noir' en gastronomie ?",
+      o:["Cèpe","Morille","Truffe noire","Enoki"], b:2 },
+    { q:"Quel métal est traditionnellement utilisé pour fabriquer un wok authentique ?",
+      o:["Aluminium","Acier carbone","Fonte émaillée","Inox"], b:1 },
+    { q:"Quel ingrédient donne sa couleur rouge au paprika fumé ?",
+      o:["Safran","Betterave","Curcuma","Piment séché"], b:3 },
+    { q:"Quel pays est le plus grand consommateur de thé par habitant ?",
+      o:["Japon","Turquie","Inde","Royaume-Uni"], b:1 },
+    { q:"Quel gaz inodore et mortel peut s’accumuler dans une maison mal ventilée ?",
+    o:["Monoxyde de carbone","Ozone","Méthane","Dioxyde de soufre"], b:0 },
+    { q:"Quel matériau isolant est utilisé dans la majorité des fenêtres modernes à double vitrage ?",
+    o:["Ozone","Hélium","Argon","Hydrogène"], b:2 },
+     { q:"Quel type de fichier est le plus susceptible de contenir un virus informatique ?",
+    o:["Un fichier .exe","Un fichier .txt","Une image .png","Un fichier .mp3"], b:0 },
+    { q:"Quel fruit est à l’origine du vinaigre balsamique traditionnel ?",
+      o:["Poire","Pomme","Figue","Raisin"], b:3 },
+    { q:"Quel procédé permet de conserver les aliments en éliminant presque toute l’eau ?",
+      o:["Saumurage","Pasteurisation","Lyophilisation","Confisage"], b:2 },
+    { q:"Quel phénomène explique pourquoi les vêtements noirs absorbent plus de chaleur au soleil ?",
+    o:["Absorption des longueurs d’onde","Réflexion diffuse","Polarisation thermique","Effet photochromique"], b:0 },
+    { q:"Quel pays a inventé la technique du 'tempura' ?",
+      o:["Philippines","Pakistan","Afghanistan","Portugal"], b:3 },
+    { q:"Quel pays a inventé le premier système de métro souterrain au monde ?",
+    o:["France","États-Unis","Royaume-Uni","Allemagne"], b:2 },
+    { q:"Quel phénomène explique pourquoi les avions laissent parfois des traînées blanches dans le ciel ?",
+    o:["Condensation de vapeur d’eau","Réflexion solaire","Ionisation de l’air","Pollution visible"], b:0 },
+    { q:"Quel métal est utilisé dans la majorité des batteries rechargeables de téléphones modernes ?",
+    o:["Nickel","Lithium","Plomb","Zinc"], b:1 },
+    { q:"Quel type de riz est utilisé pour préparer un risotto authentique ?",
+      o:["Arborio","Basmati","Jasmine","Sushi"], b:0 },
+    { q:"Quel document est essentiel pour contester une facture erronée ?",
+    o:["Un appel téléphonique","Une preuve écrite (courriel, reçu)","Une plainte verbale","Une photo du produit"], b:1 },
+],
+    },
+    
+    nature: {
+  revision: [
+  { q:"Quel animal contribue énormément à l’écosystème en pollinisant les plantes ?",
+    o:["Fourmi","Abeille","Coccinelle","Mouche"], b:1 },
+  { q:"Quel signe peut indiquer qu’un champignon sauvage est potentiellement toxique ?",
+    o:["Couleur terne","Odeur agréable","Anneau ou volve à la base","Chapeau parfaitement rond"], b:2 },
+  { q:"Quel phénomène naturel crée un arc coloré dans le ciel après la pluie ?",
+    o:["Halo solaire","Arc-en-ciel","Brume","Givre"], b:1 },
+  { q:"Quel animal détient la plus grande espérance de vie connue ?",
+    o:["Requin du Groenland","Éléphant","Tortue géante","Baleine boréale"], b:3 },
+  { q:"Quel type de nuage est associé aux orages violents ?",
+    o:["Stratus","Cumulonimbus","Cirrus","Altocumulus"], b:1 },
+  { q:"Quel animal construit des barrages dans les rivières ?",
+    o:["Castor","Rat musqué","Loutre","Héron"], b:0 },
+  { q:"Quel phénomène naturel se produit lorsque l’eau chauffe et devient vapeur ?",
+    o:["Évaporation","Gel","Sédimentation","Érosion"], b:0 },
+  { q:"Quel animal est connu pour son long cou ?",
+    o:["Lama","Girafe","Lion","Ours"], b:1 },
+  { q:"Quel micro-organisme est responsable de la peste noire ?",
+    o:["Salmonella enterica","Vibrio cholerae","Bacillus anthracis","Yersinia pestis"], b:3 },
+  { q:"Quel phénomène naturel peut rendre le sol glissant en hiver ?",
+    o:["Soleil","Vent","Brume","Verglas"], b:3 },
+  { q:"Quel insecte peut sauter très haut par rapport à sa taille ?",
+    o:["Papillon","Sauterelle","Fourmi","Guêpe"], b:1 },
+    { q:"Quel animal marin peut provoquer une paralysie respiratoire par simple contact ?",
+  o:["Méduse-boîte","Raie-manta","Poisson-lune","Calmar géant"], b:0 },
+  { q:"Quel arbre perd ses feuilles en automne ?",
+    o:["Palmier","Cèdre","Érable","Pin"], b:2 },
+  { q:"Quel phénomène naturel peut provoquer des vagues géantes imprévisibles ?",
+    o:["Courant de rive","Marée de tempête","Onde stationnaire","Vague scélérate"], b:3 },
+  { q:"Quel animal est célèbre pour sa lenteur ?",
+    o:["Paresseux","Guépard","Loup","Zèbre"], b:0 },
+  { q:"Quel type de roche se forme par accumulation de sédiments compressés ?",
+    o:["Roche volcanique","Roche ignée","Roche sédimentaire","Roche cristalline"], b:2 },
+  { q:"Quel insecte est connu pour produire du miel ?",
+    o:["Guêpe","Abeille","Fourmi","Moustique"], b:1 },
+  { q:"Quel signe naturel peut indiquer qu’un sol forestier est instable ?",
+    o:["Affaissements irréguliers","Présence de mousse","Odeur d’humus","Branches au sol"], b:0 },
+  { q:"Quel animal est le roi de la jungle ?",
+    o:["Panthère","Tigre","Lion","Guépard"], b:2 },
+  { q:"Quel phénomène naturel se produit lorsque l’eau tombe du ciel sous forme liquide ?",
+    o:["Grêle","Neige","Givre","Pluie"], b:3 }
+ ],
+  facile: [
+    { q:"Quel phénomène naturel crée un arc coloré dans le ciel après la pluie ?",
+      o:["Arc-en-ciel","Brume","Givre","Halo solaire"], b:0 },
+    { q:"Quelle plante est connue pour ses aiguilles et son odeur de résine ?",
+      o:["Saule","Érable","Bouleau","Pin"], b:3 },
+    { q:"Quel animal construit des barrages dans les rivières ?",
+      o:["Loutre","Castor","Rat musqué","Héron"], b:1 },
+    { q:"Quel phénomène naturel se produit lorsque l’eau devient solide ?",
+      o:["Gel","Évaporation","Condensation","Fusion"], b:0 },
+    { q:"Quel arbre perd ses feuilles en automne ?",
+      o:["Épinette","Mélèze","Érable","Cèdre"], b:2 },
+    { q:"Quel animal est connu pour changer de couleur pour se camoufler ?",
+      o:["Tortue","Caméléon","Panda","Koala"], b:1 },
+    { q:"Quel fruit pousse naturellement dans les bananiers ?",
+      o:["Mangue","Banane","Pomme","Poire"], b:1 },
+    { q:"Quelle race de chien est reconnue pour tirer des traîneaux ?",
+  o:["Boxer","Caniche","Husky","Bulldog"], b:2 },
+    { q:"Quel phénomène naturel se produit lorsque l’eau chauffe et devient vapeur ?",
+      o:["Érosion","Gel","Sédimentation","Évaporation"], b:3 },
+    { q:"Quel animal contribue énormément à l’écosystème en pollinisant les plantes ?",
+  o:["Abeille","Fourmi","Mouche","Coccinelle"], b:0 },
+    { q:"Quel animal détient le record de la morsure la plus puissante du monde ?",
+    o:["Jaguar","Hyène tachetée","Ours polaire","Crocodile marin"], b:3 },
+    { q:"Quel phénomène naturel peut rendre le sol glissant en hiver ?",
+      o:["Vent","Brume","Verglas","Soleil"], b:2 },
+    { q:"Quel insecte peut sauter très haut par rapport à sa taille ?",
+  o:["Fourmi","Sauterelle","Guêpe","Papillon"], b:1 },
+    { q:"Quel animal est célèbre pour sa lenteur ?",
+      o:["Paresseux","Guépard","Loup","Zèbre"], b:0 },
+    { q:"Quel phénomène naturel se produit lorsque la neige tombe du ciel ?",
+      o:["Chute de neige","Givre","Rosée","Brume"], b:0 },
+    { q:"Quel animal vit dans une coquille qu’il transporte ?",
+      o:["Grenouille","Crabe","Serpent","Escargot"], b:3 },
+    { q:"Quel phénomène naturel se produit lorsque le vent souffle très fort ?",
+      o:["Gel","Rosée","Tempête","Arc-en-ciel"], b:2 },
+    { q:"Quel animal est connu pour son long cou ?",
+      o:["Girafe","Lion","Ours","Lama"], b:0 },
+    { q:"Quel phénomène naturel se produit lorsque l’eau tombe du ciel sous forme liquide ?",
+      o:["Neige","Pluie","Givre","Grêle"], b:1 },
+    { q:"Quel animal est le roi de la jungle ?", o:["Guépard","Tigre","Panthère","Lion"], b:3 }
+],
+  moyen: [
+    { q:"Quel phénomène naturel se produit lorsque l’eau s’évapore puis retombe sous forme de pluie ?",
+      o:["Sédimentation","Condensation locale","Érosion rapide","Cycle de l’eau"], b:3 },
+    { q:"Quel type de roche se forme à partir de lave refroidie ?",
+      o:["Roche ignée","Roche métamorphique","Roche sédimentaire","Roche fossile"], b:0 },
+    { q:"Quelle plante est connue pour stocker de grandes quantités d’eau dans ses feuilles épaisses ?",
+      o:["Fougère","Aloe vera","Érable","Lavande"], b:1 },
+    { q:"Quel type de sol est considéré comme le plus fertile pour l’agriculture ?", 
+   o:["Tourbe","Sable","Argile","Limon"], b:3 }, 
+    { q:"Quel animal détient le record du plus grand mammifère vivant ?",
+      o:["Orque","Éléphant d’Afrique","Baleine bleue","Hippopotame"], b:2 },
+      { q:"Quel phénomène naturel se produit lorsque des plaques tectoniques glissent brusquement ?",
+      o:["Avalanche","Tornade","Éruption solaire","Séisme"], b:3 },
+    { q:"Quel animal nocturne est connu pour son vol silencieux ?",
+      o:["Faucon","Hibou","Corbeau","Goéland"], b:1 },
+    { q:"Quel phénomène naturel se produit lorsque la lumière se sépare en plusieurs couleurs ?",
+      o:["Dispersion","Réfraction inversée","Polarisation","Diffusion"], b:0 },
+    { q:"Quel type de sol est le plus fertile pour l’agriculture ?",
+      o:["Limon","Argile pure","Sable sec","Tourbe acide"], b:0 },
+    { q:"Quel animal marin peut produire de la lumière grâce à la bioluminescence ?",
+      o:["Dauphin","Raie manta","Méduse","Requin-marteau"], b:2 },
+    { q:"Quel type de climat est caractérisé par des étés chauds et secs et des hivers doux et humides ?",
+    o:["Climat polaire","Climat méditerranéen","Climat continental","Climat tropical"], b:1 },
+    { q:"Quel phénomène se produit lorsque des particules fines restent en suspension dans l’air, réduisant la visibilité ?",
+      o:["Rosée","Gelée blanche","Givre","Brume"], b:3 },
+    { q:"Quel type de forêt est caractérisé par des arbres à feuilles persistantes et un climat froid ?",
+      o:["Savane","Forêt tropicale","Forêt tempérée","Taïga"], b:3 },
+    { q:"Quel minéral est essentiel à la formation du verre ?",
+      o:["Silice","Graphite","Quartz rose","Mica"], b:0 },
+    { q:"Quelle plante est connue pour ses feuilles en forme d’aiguilles et sa forte résistance au froid ?",
+      o:["Pin","Olivier","Palmier","Eucalyptus"], b:0 },
+    { q:"Quelle plante est connue pour ses propriétés répulsives contre les moustiques ?",
+      o:["Menthe","Citronnelle","Romarin","Thym"], b:1 },
+    { q:"Quelle espèce animale détient le record de la plus longue durée de vie connue ?",
+    o:["Baleine bleue","Éléphant d’Afrique","Tortue géante des Seychelles","Gorille"], b:2 },
+    { q:"Quel type de roche se forme par accumulation de sédiments compressés ?",
+      o:["Roche ignée","Roche sédimentaire","Roche volcanique","Roche cristalline"], b:1 },
+    { q:"Quelle plante est connue pour survivre dans les déserts grâce à ses réserves d’eau ?",
+    o:["Cactus","Érable","Bouleau","Olivier"], b:0 },
+    { q:"Quelle plante est connue pour ses feuilles en forme d’aiguilles et sa forte résistance au froid ?",
+      o:["Eucalyptus","Olivier","Palmier","Pin"], b:0 }
+],
+    difficile: [
+  { q:"Quel oiseau détient le record de la plus grande envergure au monde ?",
+    o:["Albatros hurleur","Condor des Andes","Pélican frisé","Marabout d’Afrique"], b:0 },
+  { q:"Quelle plante est considérée comme la plus venimeuse au monde ?",
+  o:["If commun","Ricin","Aconit napel","Manchineel"], 
+  b:3 },
+  { q:"Quel micro-organisme est responsable de la peste noire historique ?",
+    o:["Yersinia pestis","Vibrio cholerae","Bacillus anthracis","Salmonella enterica"], b:0 },
+  { q:"Quel champignon médicinal est utilisé depuis des siècles pour ses propriétés immunitaires ?",
+    o:["Coprin noir","Amanite phalloïde","Reishi","Cortinaire roux"], b:2 },
+  { q:"Quel type de nuage est associé aux orages violents ?", 
+      o:["Altocumulus","Cirrus","Stratus","Cumulonimbus"], b:3 }, 
+  { q:"Quel phénomène naturel peut provoquer des vagues géantes imprévisibles en pleine mer ?",
+    o:["Marée de tempête","Vague scélérate","Onde stationnaire","Courant de rive"], b:1 },
+    { q:"Quel animal détient le record du venin le plus puissant parmi les serpents ?", 
+    o:["Cobra royal","Taïpan du désert","Vipère aspic","Python"], b:1 }, 
+  { q:"Quel signe peut indiquer qu’un sol volcanique est instable et dangereux ?",
+    o:["Roches arrondies","Présence de mousse","Sol sec","Fissures chaudes ou fumantes"], b:3 },
+  { q:"Quel phénomène atmosphérique rare peut provoquer des éclairs sans pluie ?",
+    o:["Orage sec","Halo solaire","Mirage chaud","Arc circumhorizontal"], b:0 },
+  { q:"Quel animal marin peut provoquer une paralysie respiratoire par simple contact avec ses tentacules ?",
+    o:["Raie manta","Méduse-boîte","Calmar géant","Poisson-lune"], b:1 },
+  { q:"Quel indice peut indiquer qu’une eau stagnante contient des micro-organismes dangereux ?",
+    o:["Courant faible","Présence de pierres","Température froide","Odeur inhabituelle"], b:3 },
+  { q:"Quel animal détient le record du venin le plus puissant parmi les invertébrés ?",
+    o:["Scorpion jaune","Veuve noire","Cône géographique","Mygale goliath"], b:2 },
+  { q:"Quel phénomène naturel peut indiquer un risque imminent de glissement de terrain ?",
+    o:["Fissures récentes dans le sol","Présence de lichens","Sol humide","Roches plates"], b:0 },
+  { q:"Quel type de champignon peut provoquer des hallucinations naturelles ?",
+    o:["Psilocybe","Cèpe","Bolet","Coprin chevelu"], b:0 },
+  { q:"Quel phénomène naturel peut rendre l’air irrespirable dans certaines vallées volcaniques ?",
+    o:["Vent faible","Accumulation de dioxyde de soufre","Humidité élevée","Présence de sable"], b:1 },
+  { q:"Quel record naturel détient le lac le plus profond du monde ?",
+    o:["Lac Tanganyika","Lac Baïkal","Lac Supérieur","Lac Victoria"], b:1 },
+  { q:"Quel mammifère détient le record de la plus longue espérance de vie ?",
+    o:["Orque","Éléphant d’Afrique","Baleine boréale","Tortue géante des Seychelles"], b:2 },
+  { q:"Quel signe naturel peut indiquer qu’un sol forestier est instable et dangereux ?", 
+   o:["Affaissements irréguliers","Présence de mousse","Odeur d’humus","Branches au sol"], b:0 }, 
+  { q:"Quel micro-organisme est responsable du tétanos ?",
+    o:["Listeria monocytogenes","E. coli","Staphylococcus aureus","Clostridium tetani"], b:3 },
+  { q:"Quel champignon est considéré comme le plus venimeux au monde ?",
+  o:["Galerina marginata","Amanite phalloïde","Cortinaire couleur de rocou","Lépiote brun‑orangé"], 
+  b:2 }
+],
+    },
+    
+    enjeux: {
+  revision: [
+
+  { q:"Quel gaz est responsable en partie de l’effet de serre ?",
+    o:["He₂","O₂","H₂","CO"], b:3 },
+  { q:"Quel pays connaît actuellement une guerre civile marquée par des attaques de drones contre des civils ?",
+    o:["Libye","Éthiopie","Soudan","Somalie"], b:2 },
+  { q:"Quel est l’un des effets à long terme de la fonte du pergélisol dans l’Arctique ?",
+    o:["Libération massive de méthane","Augmentation de la biodiversité","Stabilisation des sols","Diminution des émissions de CO₂"], b:0 },
+  { q:"Quel animal est en danger à cause de la fonte de la banquise ?",
+    o:["Koala","Ours polaire","Capybara","Panda"], b:1 },
+  { q:"Quel territoire fait l’objet de milliers de violations des droits humains documentées par l’ONU en 2025‑2026 ?",
+    o:["Chypre","Gaza","Liban","Bahreïn"], b:1 },
+  { q:"Quel phénomène climatique extrême est devenu plus fréquent selon les rapports récents du GIEC ?",
+    o:["Vagues de chaleur prolongées","Tornades polaires","Pluies d’acide","Éruptions solaires"], b:0 },
+  { q:"Quel pays fait face à une crise d’eau potable due à la salinisation des nappes phréatiques ?",
+    o:["Canada","Suisse","Bangladesh","Argentine"], b:2 },
+  { q:"Quel animal marin est menacé par le plastique ?",
+    o:["Lézard","Singe","Tortue","Cheval"], b:2 },
+  { q:"Quel est le rôle principal de l’ONU dans les crises humanitaires ?",
+    o:["Conntrôler les médias","Gérer les banques mondiales","Superviser les élections nationales","Coordonner l’aide internationale"], b:3 },
+  { q:"Quel phénomène contribue aux migrations forcées dans les îles du Pacifique depuis plus de 30 ans ?",
+    o:["Montée du niveau de la mer","Diminution des cyclones","Refroidissement des océans","Augmentation des récifs coralliens"], b:0 },
+  { q:"Quel pays fait face à une explosion de violence des gangs, provoquant le déplacement de milliers de familles ?",
+    o:["Mexique","Haïti","Colombie","Guatemala"], b:1 },
+  { q:"Quel est l’un des impacts majeurs de la pollution plastique sur les chaînes alimentaires marines ?",
+    o:["Création de nouvelles espèces","Augmentation de la taille des poissons","Stabilisation des populations marines","Accumulation de toxines dans les organismes"], b:3 },
+  { q:"Quel continent compte aujourd’hui le plus grand nombre de personnes vivant sous le seuil de pauvreté extrême ?",
+    o:["Amérique latine","Asie du Sud","Afrique subsaharienne","Europe de l’Est"], b:2 },
+  { q:"Quel est l’un des risques majeurs associés à la collecte massive de données par les États depuis les années 2000 ?",
+    o:["Excès de stockage","Diminution de la connectivité","Cyberattaques ciblant les infrastructures critiques","Baisse de la surveillance"], b:2 },
+  { q:"Quel pays subit une crise humanitaire liée à la combinaison de conflits, de famine et de déplacements massifs depuis plusieurs décennies ?",
+    o:["Soudan","Finlande","Nouvelle-Zélande","Irlande"], b:0 },
+  { q:"Quel type d’énergie est renouvelable ?",
+    o:["Pétrole","Nucléaire","Solaire","Fossiles"], b:2 },
+  { q:"Quel facteur est aujourd’hui considéré comme la principale cause de la perte rapide de biodiversité mondiale ?",
+    o:["Éruptions volcaniques","Destruction des habitats","Rotation des cultures","Diminution du tourisme"], b:1 },
+  { q:"Quel est l’un des effets à long terme de la déforestation massive en Amazonie depuis les années 1970 ?",
+    o:["Perturbation du cycle de l’eau à l’échelle mondiale","Augmentation des glaciers","Stabilisation du climat","Création de nouvelles forêts naturelles"], b:0 },
+  { q:"Quel organisme est chargé de protéger les enfants dans les zones de crise ?",
+    o:["UNICEF","OMS","Interpol","OPEP"], b:0 },
+  { q:"Quel moyen de transport pollue le plus ?",
+    o:["Marche","Vélo","Avion","Trottinette"], b:2 }
+],
+  facile: [
+    { q:"Comment appelle-t-on le réchauffement de la planète ?", o:["Éclipse","Tremblement de terre","Changement climatique","Marée"], b:2 },
+    { q:"Que se passe-t-il quand les glaciers fondent ?", o:["Le niveau de la mer monte","La Terre rétrécit","Le Soleil s’éteint","Les volcans explosent"], b:0 },
+    { q:"Quel gaz est responsable en partie de l’effet de serre ?", o:["He₂","O₂","H₂","CO"], b:3 },
+    { q:"Quel animal est en danger à cause de la fonte de la banquise ?", o:["Koala","Ours polaire","Capybara","Panda"], b:1 },
+    { q:"Quel grand mammifère marin est menacé ?", o:["Hippopotame","Ornithorynque","Baleine bleue","Zèbre"], b:2 },
+    { q:"Que signifie 'espèce en voie de disparition' ?", o:["Espèce imaginaire","Espèce très nombreuse","Nouvelle espèce","Espèce qui risque de disparaître"], b:3 },
+    { q:"Quel animal est menacé par le braconnage pour sa corne ?", o:["Panda","Rhinocéros","Gorille","Vache"], b:1 },
+    { q:"Quel geste aide la planète ?", o:["Recycler","Jeter partout","Gaspiller l’eau","Laisser les lumières allumées"], b:0 },
+    { q:"Quel moyen de transport pollue le plus ?", o:["Marche","Vélo","Avion","Trottinette"], b:2 },
+    { q:"Quel pays est touché par un conflit à Gaza ?", o:["Palestine","Canada","Suède","Brésil"], b:0 },
+    { q:"Quel pays connaît une grave crise de violence ?", o:["Haïti","Norvège","Japon","Australie"], b:0 },
+    { q:"Quel pays est touché par une guerre civile ?", o:["Suisse","Islande","Portugal","Soudan"], b:3 },
+    { q:"Que peut-on faire pour économiser l’eau ?", o:["Arroser à midi","Laisser couler l’eau","Remplir la baignoire tous les jours","Prendre des douches courtes"], b:3 },
+    { q:"Que peut-on faire pour produire moins de déchets ?", o:["Tout brûler","Recycler","Tout jeter","Acheter plus"], b:1 },
+    { q:"Quel type d’énergie est renouvelable ?", o:["Pétrole","Nucléaire","Solaire","Fossiles"], b:2 },
+    { q:"Quel type d’énergie utilise le vent ?", o:["Nucléaire","Éolienne","Biomasse","Solaire"], b:1 },
+    { q:"Que signifie 'pollution' ?", o:["Saleté dans l’environnement","Nettoyage de la nature","Plantation d’arbres","Protection des animaux"], b:0 },
+    { q:"Que peut-on planter pour aider la planète ?", o:["Des arbres","Des déchets","Du plastique","Du métal"], b:0 },
+    { q:"Quel animal marin est menacé par le plastique ?", o:["Lézard","Singe","Tortue","Cheval"], b:2 },
+    { q:"Que signifie 'réduire, réutiliser, recycler' ?", o:["Tout brûler","Plus polluer","Tout jeter","Moins gaspiller"], b:3 }
+],
+    moyen: [
+  { q:"Quel continent compte aujourd’hui le plus grand nombre de personnes vivant sous le seuil de pauvreté extrême ?",
+    o:["Europe de l'Est","Asie du Sud","Amérique latine","Afrique subsaharienne"], b:3 },
+     { q:"Quel est le rôle principal de l’ONU dans les crises humanitaires ?",
+    o:["Gérer les banques mondiales","Coordonner l’aide internationale","Superviser les élections nationales","Contrôler les médias"], 
+    b:1 },
+     { q:"Quel organisme est chargé de protéger les enfants dans les zones de crise ?",
+    o:["OPEP","OMS","Interpol","UNICEF"], 
+    b:3 },
+  { q:"Quel droit fondamental les femmes d’Afghanistan ont-elles perdu depuis le retour des talibans ?",
+    o:["Le droit à l’éducation secondaire et universitaire","Le droit de vote","Le droit de posséder un téléphone","Le droit de voyager en avion"], 
+    b:0 },
+  { q:"Quel pays connaît actuellement une guerre civile marquée par des attaques de drones contre des civils ?",
+    o:["Éthiopie","Soudan","Somalie","Libye"], 
+    b:1 }, // Soudan : attaques de drones, civils tués
+    { q:"Quel est le rôle du CICR (Croix-Rouge internationale) dans les conflits armés ?",
+    o:["Rédiger des lois internationales","Organiser des élections", "Protéger les civils et soigner les blessés","Superviser les échanges commerciaux"], 
+    b:2 },
+  { q:"Quel pays fait face à une explosion de violence des gangs, provoquant le déplacement de milliers de familles ?",
+    o:["Haïti","Mexique","Colombie","Guatemala"], 
+    b:0 }, // Haïti : 17 500 déplacés en 2 semaines
+   { q:"Quel enjeu environnemental affecte directement les communautés nordiques du Canada ?",
+    o:["Fonte accélérée du pergélisol","Désertification totale","Ouragans tropicaux fréquents","Augmentation des tsunamis"], 
+    b:0 },
+  { q:"Quel territoire fait l’objet de milliers de violations des droits humains documentées par l’ONU en 2025‑2026 ?",
+    o:["Liban","Chypre","Gaza","Bahreïn"], 
+    b:2 }, // Gaza : violations massives documentées par l’ONU
+  { q:"Dans quel pays les femmes et les filles sont-elles particulièrement touchées par les violences sexuelles en contexte de conflit ?",
+    o:["Jordanie","République démocratique du Congo","Tunisie","Kazakhstan"], 
+    b:1 }, // RDC : violences sexuelles en zones de conflit
+    { q:"Quel pays a récemment connu des incendies massifs liés à des sécheresses record ?",
+    o:["Irlande","Norvège","Japon","Chili"], b:3 },
+     { q:"Quel enjeu climatique touche particulièrement le Québec et le Canada ces dernières années ?",
+    o:["Incendies de forêt plus fréquents","Disparition totale des hivers","Sécheresse permanente","Tornades tropicales"], 
+    b:0 },
+  { q:"Quel facteur aggrave fortement la pauvreté mondiale selon les données récentes ?",
+    o:["La hausse du tourisme","La baisse de la natalité","La diminution du commerce mondial","Les crises climatiques"], 
+    b:3 }, // Crises climatiques → aggravent la pauvreté
+  { q:"Quel groupe est le plus touché par la pauvreté dans les zones de conflit selon l’ONU ?",
+    o:["Personnes âgées","Hommes adultes","Femmes et filles","Étudiants"], 
+    b:2 }, // Femmes et filles 7.7x plus touchées
+     { q:"Quel facteur est aujourd’hui considéré comme la principale cause de la perte rapide de biodiversité mondiale ?",
+    o:["Destruction des habitats","Éruptions volcaniques","Rotation des cultures","Diminution du tourisme"], b:0 },
+   { q:"Quel risque technologique est souvent mentionné par les experts concernant l’IA avancée ?",
+    o:["Perte de gravité","Désinformation automatisée","Explosion des océans","Arrêt du champ magnétique terrestre"], b:1 },
+    { q:"Quel facteur contribue aujourd’hui à l’accès limité à l’eau potable dans plusieurs régions du monde ?",
+    o:["Augmentation du tourisme","Baisse de la population","Excès de pluie","Pollution industrielle"], 
+    b:3 },
+  { q:"Quel droit les femmes afghanes ont-elles également perdu en plus de l’éducation ?",
+    o:["Le droit de travailler dans la plupart des secteurs","Le droit de posséder une voiture","Le droit de se marier","Le droit d’utiliser Internet"],
+    b:0 }, // Restrictions extrêmes documentées par ONU & Amnesty
+      { q:"Quel phénomène mondial menace directement la sécurité alimentaire de plusieurs régions ?",
+    o:["Dégradation des sols agricoles","Augmentation des forêts tropicales","Baisse de la population mondiale","Stabilité climatique"], 
+    b:0 },
+    { q:"Quel pays fait face à une crise d’eau potable due à la salinisation des nappes phréatiques ?",
+    o:["Suisse","Bangladesh","Canada","Argentine"], 
+    b:1 }
+],
+   difficile: [
+  { q:"Quel phénomène climatique amplifié depuis les années 1970 contribue aujourd’hui à la multiplication des mégafeux dans le monde ?",
+    o:["Hausse des températures moyennes","Diminution de l’ozone","Rotation terrestre irrégulière","Refroidissement des océans"], b:0 },
+    { q:"Quel groupe est le plus touché par les migrations forcées dues à la montée des eaux ?",
+    o:["Citadins des grandes capitales","Habitants des montagnes","Populations des déserts","Communautés côtières"], 
+    b:3 },
+  { q:"Quel est l’un des effets à long terme de la fonte du pergélisol dans l’Arctique ?",
+    o:["Stabilisation des sols","Augmentation de la biodiversité","Libération massive de méthane","Diminution des émissions de CO₂"], b:2 },
+  { q:"Quel facteur historique explique en partie l’inflation alimentaire mondiale actuelle ?",
+    o:["Baisse de la demande mondiale","Excès de terres agricoles","Surproduction de céréales","Dépendance excessive aux monocultures"], b:3 },
+  { q:"Quel océan contient la plus grande concentration de microplastiques, conséquence de décennies de pollution ?",
+    o:["Pacifique","Atlantique Sud","Arctique","Indien"], b:0 },
+     { q:"Quel est l’un des objectifs majeurs du développement durable selon l’ONU ?",
+    o:["Augmenter la production militaire","Éradiquer la pauvreté","Réduire l’immigration","Supprimer les frontières"], 
+    b:1 },
+  { q:"Quel est l’un des risques majeurs associés à la collecte massive de données par les États depuis les années 2000 ?",
+    o:["Cyberattaques ciblant les infrastructures critiques","Diminution de la connectivité","Excès de stockage","Baisse de la surveillance"], b:0 },
+  { q:"Quel phénomène contribue aux migrations forcées dans les îles du Pacifique depuis plus de 30 ans ?",
+    o:["Diminutions des cyclones","Montée du niveau de la mer","Refroidissement des océans","Augmentation des récifs coralliens"], b:1 },
+  { q:"Quel pays a récemment renforcé ses lois sur la cybersécurité en réponse à des attaques contre ses infrastructures énergétiques ?",
+    o:["Bolivie","Portugal","Inde","Suède"], b:2 },
+  { q:"Quel est l’un des impacts majeurs de la surpêche depuis les années 1980 ?",
+    o:["Augmentation des récifs coralliens","Effondrement des populations de poissons","Stabilisation des écosystèmes marins","Diminution des zones mortes"], b:1 },
+  { q:"Quel facteur historique contribue à la vulnérabilité actuelle des pays du Sahel face aux crises alimentaires ?",
+    o:["Climat polaire","Surabondance d’eau","Excès de terres fertiles","Désertification progressive"], b:3 },
+  { q:"Quel pays connaît une crise migratoire interne due à la montée des eaux menaçant ses mégapoles côtières ?",
+    o:["Serbie","Autriche","Mongolie","Bangladesh"], b:3 },
+  { q:"Quel est l’un des effets à long terme de l’acidification des océans ?",
+    o:["Création de nouvelles espèces marines","Augmentation de la salinité","Dissolution des coquilles et coraux","Stabilisation du pH"], b:2 },
+    { q:"Quel phénomène climatique extrême est devenu plus fréquent selon les rapports récents du GIEC ?",
+    o:["Vagues de chaleur prolongées","Tornades polaires","Pluies d’acide","Éruptions solaires"], b:0 },
+  { q:"Quel est l’objectif principal du Programme alimentaire mondial (PAM) ?",
+    o:["Lutter contre la faim","Protéger les océans","Financer les infrastructures","Promouvoir le tourisme"], 
+    b:0 },
+  { q:"Quel pays fait face à une crise majeure liée à la pollution plastique dans ses écosystèmes marins ?",
+    o:["Afrique du Sud","Norvège","Philippines","Indonésie"], 
+    b:3 },
+  { q:"Quel est l’un des impacts majeurs de la pollution plastique sur les chaînes alimentaires marines ?",
+    o:["Augmentation de la taille des poissons","Accumulation de toxines dans les organismes","Stabilisation des populations marines","Création de nouvelles espèces"], b:1 },
+  { q:"Quel facteur historique contribue à la fragilité énergétique de nombreux pays européens ?",
+    o:["Excès de barrages hydroélectriques","Surproduction d’énergie solaire","Dépendance ancienne aux combustibles fossiles importés","Autosuffisance totale"], b:2 },
+  { q:"Quel pays subit une crise humanitaire liée à la combinaison de conflits, de famine et de déplacements massifs depuis plusieurs décennies ?",
+    o:["Soudan","Finlande","Nouvelle-Zélande","Irlande"], b:0 },
+  { q:"Quel est l’un des effets à long terme de la déforestation massive en Amazonie depuis les années 1970 ?",
+    o:["Augmentation des glaciers","Perturbation du cycle de l’eau à l’échelle mondiale","Stabilisation du climat","Création de nouvelles forêts naturelles"], b:1 }
+],
+    },
+    
+    histoire: {
+    revision: [
+  { q:"Quel événement a déclenché la Première Guerre mondiale en 1914 ?",
+    o:["Assassinat de François-Ferdinand","Bombardement de Londres","Révolution russe","Invasion de la France"], b:0 },
+  { q:"Qui a construit les pyramides de Gizeh ?",
+    o:["Les Vikings","Les Romains","Les Égyptiens","Les Mayas"], b:2 },
+  { q:"Quel empire a construit la Grande Muraille de Chine ?",
+    o:["Empire aztèque","Empire romain","Empire ottoman","Empire chinois"], b:3 },
+  { q:"Quel événement a marqué le début de la Révolution française ?",
+    o:["La prise de la Bastille","La chute de Rome","La découverte du feu","La création de l’ONU"], b:0 },
+  { q:"Quel traité a mis fin à la Première Guerre mondiale en 1919 ?",
+    o:["Traité de Tordesillas","Traité de Versailles","Traité de Paris","Traité de Brest-Litovsk"], b:1 },
+  { q:"Quel événement a déclenché la Seconde Guerre mondiale ?",
+    o:["La crise de Cuba","L’invasion de la Pologne","La chute de Berlin","L’attaque de Pearl Harbor"], b:1 },
+  { q:"Quel peuple ancien a inventé l’écriture cunéiforme ?",
+    o:["Les Sumériens","Les Romains","Les Vikings","Les Aztèques"], b:0 },
+  { q:"Quel mouvement artistique du XVe siècle a vu émerger Léonard de Vinci et Michel-Ange ?",
+    o:["Le Rococo","Le Classicisme","La Renaissance","Le Cubisme"], b:2 },
+  { q:"Quel scientifique a développé la théorie de l’évolution ?",
+    o:["Pasteur","Marie Curie","Einstein","Charles Darwin"], b:3 },
+  { q:"Quel événement de 1989 symbolise la fin de la guerre froide ?",
+    o:["La chute du mur de Berlin","La crise des missiles de Cuba","La mort de Staline","La création de l’ONU"], b:0 },
+  { q:"Quel empire était dirigé par Gengis Khan ?",
+    o:["Empire romain","Empire mongol","Empire perse","Empire ottoman"], b:1 },
+  { q:"Quel progrès médical majeur a été découvert par Alexander Fleming en 1928 ?",
+    o:["L'anesthésie","Le vaccin contre la variole","La radiographie","La pénicilline"], b:3 },
+  { q:"Quel événement historique a mis fin à la Seconde Guerre mondiale ?",
+    o:["La capitulation du Japon","La chute de Rome","La découverte de l’Amérique","La peste noire"], b:0 },
+  { q:"Quel philosophe grec a enseigné à Alexandre le Grand ?",
+    o:["Socrate","Platon","Aristote","Héraclite"], b:2 },
+  { q:"Quel événement a profondément transformé l’Europe au XIVe siècle ?",
+    o:["La guerre froide","La chute de Rome","La peste noire","La découverte de l’Amérique"], b:2 },
+  { q:"Quel pays a inventé les Jeux olympiques dans l’Antiquité ?",
+    o:["Égypte","Grèce","Chine","Inde"], b:1 },
+  { q:"Quel événement de 1969 symbolise la conquête spatiale ?",
+   o:["Les premiers pas sur la Lune","Le lancement de Spoutnik","La création de la NASA","La mission Apollo 8"], b:0 },
+  { q:"Quel empire a construit la célèbre route de la soie reliant l’Asie à l’Europe ?",
+    o:["Empire chinois","Empire romain","Empire mongol","Empire perse"], b:0 },
+  { q:"Quel navigateur a réalisé le premier tour du monde au XVIe siècle ?",
+    o:["Vasco de Gama","Colomb","Cook","Magellan"], b:3 },
+  { q:"Quel pays a été envahi par l’Allemagne en 1939, déclenchant la Seconde Guerre mondiale ?",
+    o:["Danemark","France","Belgique","Pologne"], b:3 }
+],
+        facile: [
+  { q:"Qui a construit les pyramides de Gizeh ?",
+    o:["Les Mayas","Les Romains","Les Vikings","Les Égyptiens"], b:3 },
+  { q:"Quel célèbre explorateur a découvert l’Amérique en 1492 ?",
+    o:["Magellan","Marco Polo","Christophe Colomb","Vasco de Gama"], b:2 },
+  { q:"Quel mur séparait Berlin en deux pendant la guerre froide ?",
+    o:["Le mur de Berlin","La Grande Muraille","Le mur d’Hadrien","Le mur de Varsovie"], b:0 },
+  { q:"Quel empire a construit la Grande Muraille de Chine ?",
+    o:["Empire romain","Empire chinois","Empire ottoman","Empire aztèque"], b:1 },
+  { q:"Qui était le premier empereur de Rome ?",
+    o:["Néron","César","Auguste","Trajan"], b:2 },
+  { q:"Quel pays a déclenché la Seconde Guerre mondiale en envahissant la Pologne ?",
+    o:["Allemagne","Italie","Japon","URSS"], b:0 },
+  { q:"Quelle époque est marquée par un renouveau artistique et scientifique en Europe ?",
+    o:["Âge du bronze","Renaissance","Moyen Âge","Époque féodale"], b:1 },
+  { q:"Quel célèbre scientifique a découvert la gravité ?",
+    o:["Einstein","Isaac Newton","Galilée","Tesla"], b:1 },
+  { q:"Quel navire a coulé en 1912 lors de son premier voyage ?",
+    o:["Endeavour","Lusitania","Santa Maria","Titanic"], b:3 },
+  { q:"Quel pays a inventé les Jeux olympiques dans l’Antiquité ?",
+    o:["Grèce","Égypte","Chine","Inde"], b:0 },
+  { q:"Quel grand empire était dirigé par Gengis Khan ?",
+    o:["Empire perse","Empire romain","Empire mongol","Empire ottoman"], b:2 },
+  { q:"Quel événement historique a mis fin à la Seconde Guerre mondiale ?",
+    o:["La capitulation du Japon","La chute de Rome","La découverte de l’Amérique","La peste noire"], b:0 },
+  { q:"Quel pays a construit les temples d’Angkor ?",
+    o:["Mexique","Cambodge","Grèce","Russie"], b:1 },
+  { q:"Qui a peint la Joconde ?",
+    o:["Picasso","Léonard de Vinci","Van Gogh","Michel-Ange"], b:1 },
+  { q:"Quel peuple ancien a inventé l’écriture cunéiforme ?",
+    o:["Les Sumériens","Les Romains","Les Vikings","Les Aztèques"], b:0 },
+  { q:"Quel célèbre roi de France a été surnommé le Roi Soleil ?",
+    o:["Charlemagne","Louis XVI","Louis XIV","Napoléon"], b:2 },
+  { q:"Quel pays a construit les statues de l’île de Pâques ?",
+    o:["Inde","Japon","Égypte","Chili (Rapa Nui)"], b:3 },
+  { q:"Quel événement a marqué le début de la Révolution française ?",
+    o:["La prise de la Bastille","La chute de Rome","La découverte du feu","La création de l’ONU"], b:0 },
+   { q:"Quelle innovation a permis la révolution industrielle au XVIIIe siècle ?",
+    o:["Avion","Électricité","Machine à vapeur","Ordinateur"], b:2 },
+  { q:"Quel scientifique a développé la théorie de l’évolution ?",
+    o:["Charles Darwin","Marie Curie","Einstein","Pasteur"], b:0
+    }
+],
+    moyen: [
+  { q:"Dans quelle région l’écriture cunéiforme est-elle apparue vers 3300 av. J.-C. ?",
+    o:["Chine","Égypte","Mésopotamie","Grèce"], b:2 },
+  { q:"Quel matériau utilisait-on pour écrire en Égypte antique ?",
+    o:["Métal","Marbre","Soie","Papyrus"], b:3 },
+  { q:"Quel navigateur a réalisé le premier tour du monde au XVIe siècle ?",
+    o:["Colomb","Magellan","Cook","Vasco de Gama"], b:1 },
+  { q:"Quelle religion est née en Inde il y a plus de 2500 ans ?",
+    o:["Bouddhisme","Christianisme","Islam","Judaïsme"], b:0 },
+  { q:"Quel événement marque le début du Moyen Âge en Europe ?",
+    o:["Chute de l’Empire romain","Découverte de l’Amérique","Invention de l’imprimerie","Début de la Renaissance"], b:0 },
+  { q:"Quel savant grec est considéré comme le père de la médecine occidentale ?",
+    o:["Euclide","Aristote","Hippocrate","Ptolémée"], b:2 },
+  { q:"Quel peuple a inventé la boussole, essentielle aux grandes explorations ?",
+    o:["Les Grecs","Les Chinois","Les Romains","Les Perses"], b:1 },
+  { q:"Quel mouvement artistique a débuté en Italie au XVe siècle ?",
+    o:["Le Cubisme","Le Baroque","La Renaissance","Le Romantisme"], b:2 },
+  { q:"Quel événement a déclenché la Première Guerre mondiale en 1914 ?",
+    o:["Assassinat de François-Ferdinand","Bombardement de Londres","Révolution russe","Invasion de la France"], b:0 },
+  { q:"Quel pays a été envahi par l’Allemagne en 1939, déclenchant la Seconde Guerre mondiale ?",
+    o:["Danemark","France","Belgique","Pologne"], b:3 },
+  { q:"Quel événement a marqué la fin de la Seconde Guerre mondiale en Asie ?",
+    o:["Conférence de Yalta","Débarquement de Normandie","Chute de Berlin","Bombardements d’Hiroshima et Nagasaki"], b:3 },
+  { q:"Quel conflit a opposé les États-Unis et l’URSS sans affrontement direct ?",
+    o:["La guerre du Golfe","La guerre froide","La guerre de Corée","La guerre du Vietnam"], b:1 },
+  { q:"Quel leader américain a été assassiné en 1968 pour sa lutte pour les droits civiques ?",
+    o:["John F. Kennedy","Martin Luther King Jr.","Malcolm X","Abraham Lincoln"], b:1 },
+  { q:"Quel empire a construit la célèbre route de la soie reliant l’Asie à l’Europe ?",
+    o:["Empire mongol","Empire romain","Empire chinois","Empire perse"], b:2 },
+  { q:"Quel progrès médical majeur a été découvert par Alexander Fleming en 1928 ?",
+    o:["La pénicilline","Le vaccin contre la variole","La radiographie","L’anesthésie"], b:0 },
+  { q:"Quel événement de 1989 symbolise la fin de la guerre froide ?",
+    o:["Crise des missiles de Cuba","Chute du mur de Berlin","Mort de Staline","Création de l’ONU"], b:1 },
+  { q:"Quel peuple ancien a construit les statues géantes de l’île de Pâques ?",
+    o:["Les Aztèques","Les Mayas","Les Vikings","Les Rapa Nui"], b:3 },
+  { q:"Quel philosophe grec a enseigné à Alexandre le Grand ?",
+    o:["Platon","Aristote","Socrate","Héraclite"], b:1 },
+  { q:"Quel événement a profondément transformé l’Europe au XIVe siècle ?",
+    o:["La peste noire","La chute de Rome","La guerre froide","La découverte de l’Amérique"], b:0 },
+  { q:"Quel scientifique a révolutionné la physique avec la théorie de la relativité ?",
+    o:["Newton","Galilée","Albert Einstein","Tesla"], b:2 }
+],
+    difficile: [
+  { q:"Dans quelle région du monde l’écriture cunéiforme est-elle apparue vers 3300 av. J.-C. ?",
+    o:["Grèce","Égypte","Chine","Mésopotamie"], b:3 },
+  { q:"Quel événement marque traditionnellement le début de l’Histoire (par opposition à la Préhistoire) ?",
+    o:["L’apparition de l’écriture","La maîtrise du feu","La fin des glaciations","L’invention de la roue"], b:0 },
+  { q:"Quel empire a développé l’un des premiers systèmes juridiques codifiés, le Code d’Hammourabi ?",
+    o:["Perse","Rome","Babylone","Carthage"], b:2 },
+  { q:"Quel philosophe grec est considéré comme le maître d’Aristote ?",
+    o:["Socrate","Platon","Pythagore","Héraclite"], b:1 },
+  { q:"Quelle invention chinoise a profondément transformé la guerre médiévale ?",
+    o:["La soie","La boussole","Le papier","La poudre à canon"], b:3 },
+  { q:"Quel événement a déclenché les grandes explorations européennes du XVe siècle ?",
+    o:["La prise de Constantinople en 1453","La chute de Rome","La peste noire","La guerre de Cent Ans"], b:0 },
+  { q:"Quel empire mésoaméricain a été conquis par Hernán Cortés en 1521 ?",
+    o:["Empire inca","Empire aztèque","Empire maya","Empire olmèque"], b:1 },
+  { q:"Quel mouvement intellectuel du XVIIIe siècle a promu la raison, la science et les droits humains ?",
+    o:["Le Baroque","Le Romantisme","Les Lumières","Le Surréalisme"], b:2 },
+  { q:"Quel événement a marqué le début de la Première Guerre mondiale ?",
+    o:["La révolution russe","La chute de l’Empire ottoman","La crise économique de 1910","L’assassinat de l’archiduc François-Ferdinand"], b:3 },
+  { q:"Quel traité a mis fin à la Première Guerre mondiale en 1919 ?",
+    o:["Traité de Paris","Traité de Tordesillas","Traité de Versailles","Traité de Brest-Litovsk"], b:2 },
+  { q:"Quel événement a déclenché la Seconde Guerre mondiale ?",
+    o:["L’invasion de la Pologne","La crise de Cuba","La chute de Berlin","L’attaque de Pearl Harbor"], b:0 },
+  { q:"Quel conflit idéologique a opposé les États-Unis et l’URSS après 1945 ?",
+    o:["La guerre de Corée","La guerre froide","La guerre du Golfe","La guerre du Vietnam"], b:1 },
+  { q:"Quel événement de 1969 symbolise la conquête spatiale ?",
+    o:["La mission Apollo 8","Le lancement de Spoutnik","La création de la NASA","Les premiers pas sur la Lune"], b:3 },
+  { q:"Quel leader a été assassiné en 1963, marquant profondément l’histoire américaine ?",
+    o:["John F. Kennedy","Abraham Lincoln","Martin Luther King Jr.","Malcolm X"], b:0 },
+  { q:"Quel mouvement artistique du XVe siècle a vu émerger Léonard de Vinci et Michel-Ange ?",
+    o:["Le Rococo","Le Classicisme","La Renaissance","Le Cubisme"], b:2 },
+  { q:"Quel médecin grec est considéré comme le père de la médecine occidentale ?",
+    o:["Ptolémée","Galen","Aristote","Hippocrate"], b:3 },
+  { q:"Quel événement de 1989 a symbolisé la fin de la guerre froide ?",
+    o:["La chute du mur de Berlin","La crise des missiles de Cuba","La mort de Staline","La création de l’ONU"], b:0 },
+  { q:"Quel scientifique a proposé la théorie de l’évolution en 1859 ?",
+    o:["Gregor Mendel","Charles Darwin","Louis Pasteur","James Watson"], b:1 },
+  { q:"Quel empire a construit la célèbre route de la soie reliant l’Asie à l’Europe ?",
+    o:["Empire chinois","Empire romain","Empire mongol","Empire perse"], b:0 },
+  { q:"Quel événement mondial de 1918 a causé des millions de morts en plus de la guerre ?",
+    o:["Le choléra","La peste noire","La grippe espagnole","La variole"], b:2 }
+],
+    },
+    
+    énigmes: {
+        revision: [
+  { q:"Je n’ai pas de bouche mais je parle, pas d’oreilles mais j’écoute. Qui suis‑je ?",
+    o:["Une radio","Le vent","Un fantôme","L’écho"], b:3 },
+  { q:"Je mens toujours. Cette phrase est‑elle vraie ou fausse ?",
+    o:["Paradoxe insoluble","Vraie","Fausse","Ni l’un ni l’autre"], b:0 },
+  { q:"Je suis plein de trous mais je retiens l’eau. Qui suis‑je ?",
+    o:["Une éponge","Un filet","Un seau percé","Un corail"], b:0 },
+  { q:"Je commence la nuit et je finis le matin, mais je ne dors jamais. Qui suis‑je ?",
+    o:["Le ciel","Lettre N","L’ombre","Le vent"], b:1 },
+  { q:"Plus je suis grand, moins tu en vois. Quand je disparais, tout devient clair. Qui suis‑je ?",
+    o:["L’ignorance","L’obscurité","La peur","Le brouillard"], b:1 },
+  { q:"Je suis pris avant d’être donné. Qui suis‑je ?",
+    o:["Une photo","Un cadeau","Un secret","Un billet"], b:0 },
+  { q:"Je peux être cassé sans être touché. Qui suis‑je ?",
+    o:["Un secret","Un verre","Une promesse","Un miroir"], b:2 },
+  { q:"Je peux voyager autour du monde sans jamais quitter ma place. Qui suis‑je ?",
+    o:["Une boussole","Une carte","Une photo","Un timbre"], b:3 },
+  { q:"Je suis parfois lourd, parfois léger. Je peux être porté, mais jamais touché. Qui suis‑je ?",
+    o:["Un fardeau","Un souvenir","Un rêve","Un mensonge"], b:0 },
+  { q:"Je peux être volé, donné, perdu ou trouvé, mais je ne suis pas un objet. Qui suis‑je ?",
+    o:["Le temps","Un sourire","Un secret","Un nom"], b:3 },
+  { q:"Je suis toujours devant toi, mais tu ne peux jamais m’atteindre. Qui suis‑je ?",
+    o:["Le futur","Ton ombre","L’horizon","Le soleil"], b:2 },
+  { q:"Je n’existe que dans ton esprit, mais je peux te faire transpirer, fuir ou abandonner. Qui suis‑je ?",
+    o:["Le déjà-vu","La peur","Un souvenir","Un mensonge"], b:1 },
+  { q:"Je suis là avant la question, mais je disparais avec la réponse. Qui suis‑je ?",
+    o:["Le doute","Le silence","La curiosité","L’ignorance"], b:3 },
+  { q:"Je suis léger comme une plume, mais personne ne peut me tenir longtemps. Qui suis‑je ?",
+    o:["La fumée","Une bulle","Le souffle","La poussière"], b:2 },
+  { q:"Je n’ai pas de jambes, mais je cours. Je n’ai pas de bouche, mais je murmure. Qui suis‑je ?",
+    o:["Le vent","Une rivière","Une horloge","Une corde"], b:1 },
+  { q:"On me casse pour me partager, mais je ne suis pas un objet. Qui suis‑je ?",
+    o:["Un silence","Un secret","Un souvenir","Un rêve"], b:1 },
+  { q:"Je peux te faire voir ce qui n’existe pas, entendre ce qui n’est pas dit, croire ce qui est faux. Qui suis‑je ?",
+    o:["L’imagination","La folie","Le rêve","La manipulation"], b:0 },
+  { q:"Je peux être brisé par un mot, réparé par un geste, mais jamais recollé comme avant. Qui suis‑je ?",
+    o:["La confiance","Un cœur","Une promesse","Un lien"], b:0 },
+  { q:"Plus je suis grand, moins on me voit. Qui suis‑je ?",
+    o:["Le soleil","Un nuage","La montagne","L’obscurité"], b:3 },
+  { q:"Je suis partout et nulle part. Je peux être plein ou vide, mais je ne pèse rien. Qui suis‑je ?",
+    o:["Le sens","Le vide","Une idée","L’air"], b:1 }
+],
+        facile: [
+  { q:"Je grandis sans être vivant, je brille sans flamme. Qui suis‑je ?",
+    o:["Le soleil","Une étoile","La lune","Une lampe"], b:2 },
+  { q:"J’ai des aiguilles mais je ne pique pas. Qui suis‑je ?",
+    o:["Une horloge","Un cactus","Une boussole","Un sapin"], b:0 },
+  { q:"Plus je suis grand, moins on me voit. Qui suis‑je ?",
+    o:["Un nuage","L’obscurité","La montagne","Le soleil"], b:1 },
+  { q:"Je tombe sans jamais me faire mal. Qui suis‑je ?",
+    o:["Une étoile filante","Une feuille","La neige","La pluie"], b:3 },
+  { q:"Je peux être cassé sans être touché. Qui suis‑je ?",
+    o:["Un secret","Un verre","Une promesse","Un miroir"], b:2 },
+  { q:"Je suis toujours devant toi, mais tu ne peux jamais m’atteindre. Qui suis‑je ?",
+    o:["L’horizon","Ton ombre","Le futur","Le soleil"], b:0 },
+  { q:"Je n’ai pas de bouche mais je parle, pas d’oreilles mais j’écoute. Qui suis‑je ?",
+    o:["Un fantôme","Le vent","L’écho","Une radio"], b:2 },
+  { q:"Je suis plein de trous mais je retiens l’eau. Qui suis‑je ?",
+    o:["Un corail","Un filet","Un seau percé","Une éponge"], b:3 },
+  { q:"Je suis pris avant d’être donné. Qui suis‑je ?",
+    o:["Une photo","Un cadeau","Un secret","Un billet"], b:0 },
+  { q:"Je suis léger comme une plume, mais personne ne peut me tenir longtemps. Qui suis‑je ?",
+    o:["La fumée","Le souffle","Une bulle","La poussière"], b:1 }
+],
+      moyen: [
+  { q:"Je commence la nuit et je finis le matin, mais je ne dors jamais. Qui suis‑je ?",
+    o:["Lettre N","Le ciel","L’ombre","Le vent"], b:0 },
+  { q:"On me casse pour me partager, mais je ne suis pas un objet. Qui suis‑je ?",
+    o:["Un silence","Un secret","Un souvenir","Un rêve"], b:1 },
+  { q:"Je peux voyager autour du monde sans jamais quitter ma place. Qui suis‑je ?",
+    o:["Une carte","Un timbre","Une photo","Une boussole"], b:1 },
+  { q:"Plus je prends de place, plus je deviens léger. Qui suis‑je ?",
+    o:["Une bulle","La fumée","Un ballon","Un nuage"], b:2 },
+  { q:"Je suis invisible, mais tout le monde me connaît. Je peux être court ou long. Qui suis‑je ?",
+    o:["Un souvenir","Une voix","Un chemin","Le temps"], b:3 },
+  { q:"Je n’ai qu’une seule voix, mais je peux faire parler des milliers de gens. Qui suis‑je ?",
+    o:["Un livre","Un micro","Une radio","Un écho"], b:0 },
+  { q:"Je n’ai pas de jambes, mais je cours. Je n’ai pas de bouche, mais je murmure. Qui suis‑je ?",
+    o:["Une rivière","Le vent","Une horloge","Une corde"], b:0 },
+  { q:"Je peux être volé, donné, perdu ou trouvé, mais je ne suis pas un objet. Qui suis‑je ?",
+    o:["Le temps","Un sourire","Un secret","Un nom"], b:3 },
+  { q:"Je suis pris avant d’être utilisé, mais je ne suis pas une photo. Qui suis‑je ?",
+    o:["Un souffle","Un élan","Un risque","Un départ"], b:1 },
+  { q:"Je suis parfois lourd, parfois léger. Je peux être porté, mais jamais touché. Qui suis‑je ?",
+    o:["Un fardeau","Un souvenir","Un rêve","Un mensonge"], b:0 }
+],
+    difficile: [
+  { q:"Plus je suis grand, moins tu en vois. Quand je disparais, tout devient clair. Qui suis‑je ?",
+    o:["L’ignorance","L’obscurité","La peur","Le brouillard"], b:1 },
+  { q:"Je mens toujours. Cette phrase est‑elle vraie ou fausse ?",
+    o:["Paradoxe insoluble","Vraie","Fausse","Ni l’un ni l’autre"], b:0 },
+  { q:"Je n’existe que dans ton esprit, mais je peux te faire transpirer, fuir ou abandonner. Qui suis‑je ?",
+    o:["Un son","Le futur","La peur","Un mensonge"], b:2 },
+  { q:"On me cherche partout, mais ceux qui disent m’avoir trouvé se contredisent souvent. Qui suis‑je ?",
+    o:["La paix","Le bonheur","Le sens de la vie","La vérité"], b:3 },
+  { q:"Je peux te sauver ou te détruire. Je suis invisible, mais je décide de tes choix. Qui suis‑je ?",
+    o:["Le hasard","Une croyance","Le temps","Un secret"], b:1 },
+  { q:"Je suis là avant la question, mais je disparais avec la réponse. Qui suis‑je ?",
+    o:["Le doute","Le silence","L’ignorance","La curiosité"], b:2 },
+  { q:"Je peux être brisé par un mot, réparé par un geste, mais jamais recollé comme avant. Qui suis‑je ?",
+    o:["La confiance","Un cœur","Une promesse","Un lien"], b:0 },
+  { q:"Je suis partout et nulle part. Je peux être plein ou vide, mais je ne pèse rien. Qui suis‑je ?",
+    o:["Le sens","Le vide","Une idée","L’air"], b:1 },
+  { q:"Je peux te faire voir ce qui n’existe pas, entendre ce qui n’est pas dit, croire ce qui est faux. Qui suis‑je ?",
+    o:["Le rêve","La folie","L’imagination","La manipulation"], b:2 },
+  { q:"Je suis la seule chose que tu ne peux jamais rattraper, même si tu cours toute ta vie. Qui suis‑je ?",
+    o:["Le temps","Le passé","Le futur","Une occasion perdue"], b:1 }
+],
+      }
+   };
+
+    function chooseMode(cat) {
+      selectedCategory = cat;
+      document.getElementById("page-accueil").style.display = "none";
+      document.getElementById("page-mode").style.display = "block";
+      document.getElementById("titre-mode").textContent = "Catégorie : " + cat.toUpperCase();
+    }
+
+    function chooseDifficulty() {
+      revisionMode = false;
+      score = 0;
+      document.getElementById("page-mode").style.display = "none";
+      document.getElementById("page-difficulte").style.display = "block";
+      document.getElementById("titre-difficulte").textContent = "Catégorie : " + selectedCategory.toUpperCase();
+    }
+
+    function startRevision() {
+      revisionMode = true;
+      selectedDifficulty = "revision";
+      currentIndex = 0;
+      score = 0;
+
+      const list = questions[selectedCategory].revision;
+      if (!list || list.length === 0) {
+        alert("Aucune question disponible pour cette catégorie.");
+        goHome();
+        return;
+      }
+
+      document.getElementById("page-mode").style.display = "none";
+      document.getElementById("page-question").style.display = "block";
+      document.getElementById("cat-title").textContent = selectedCategory.toUpperCase() + " — Mode Révision";
+      document.getElementById("score-display").textContent = "";
+      loadQuestion();
+    }
+
+    function startCategory(difficulty) {
+      revisionMode = false;
+      selectedDifficulty = difficulty;
+      currentIndex = 0;
+      score = 0;
+
+      const list = questions[selectedCategory][selectedDifficulty];
+      if (!list || list.length === 0) {
+        alert("Les questions ne sont pas encore ajoutées.");
+        goHome();
+        return;
+      }
+
+      document.getElementById("page-difficulte").style.display = "none";
+      document.getElementById("page-question").style.display = "block";
+      document.getElementById("cat-title").textContent =
+        selectedCategory.toUpperCase() + " — " + difficulty.toUpperCase();
+
+      document.getElementById("score-display").textContent = "Score : 0 / 20";
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const list = questions[selectedCategory][selectedDifficulty];
+      const q = list[currentIndex];
+
+      document.getElementById("question-text").textContent =
+        (currentIndex + 1) + " - " + q.q;
+
+      document.getElementById("feedback").textContent = "";
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+
+      q.o.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(index) {
+      const list = questions[selectedCategory][selectedDifficulty];
+      const q = list[currentIndex];
+      const feedback = document.getElementById("feedback");
+
+      if (revisionMode) {
+    if (index === q.b) {
+        // Bonne réponse
+        feedback.textContent = "Correct !";
+        feedback.style.color = "#2e7d32";
+
+        // Passe à la question suivante
+        currentIndex++;
+
+        if (currentIndex < questions[selectedCategory].revision.length) {
+            setTimeout(loadQuestion, 800);
+        } else {
+            feedback.textContent = "Fin du mode révision !";
+            feedback.style.color = "#4a148c";
+        }
+
+    } else {
+        // Mauvaise réponse → rester sur la même question
+        feedback.textContent = "Incorrect. Essaie encore.";
+        feedback.style.color = "#c62828";
+    }
+
+    return;
+}
+
+
+      if (index === q.b) {
+        score++;
+        document.getElementById("score-display").textContent = "Score : " + score + " / 20";
+        feedback.textContent = "Bravo ! 🎉";
+        feedback.style.color = "#2e7d32";
+      } else {
+        feedback.textContent = "Mauvaise réponse.";
+        feedback.style.color = "#c62828";
+      }
+
+      currentIndex++;
+
+      if (currentIndex < list.length) {
+        setTimeout(loadQuestion, 800);
+      } else {
+        showEndScreen();
+      }
+    }
+
+    function showEndScreen() {
+      document.getElementById("page-question").style.display = "none";
+      document.getElementById("page-fin").style.display = "block";
+
+      document.getElementById("score-final").textContent =
+        "Score final : " + score + " / 20";
+
+      let rang = "D";
+      if (score >= 18) rang = "S";
+      else if (score >= 15) rang = "A";
+      else if (score >= 12) rang = "B";
+      else if (score >= 8) rang = "C";
+
+      document.getElementById("rang-final").textContent = "Rang : " + rang;
+    }
+
+    function goHome() {
+      document.getElementById("page-question").style.display = "none";
+      document.getElementById("page-difficulte").style.display = "none";
+      document.getElementById("page-mode").style.display = "none";
+      document.getElementById("page-fin").style.display = "none";
+      document.getElementById("page-accueil").style.display = "block";
+    }
+  </script>
+</body>
+</html>
